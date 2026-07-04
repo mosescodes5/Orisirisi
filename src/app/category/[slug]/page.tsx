@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { categories, products, placeholderImage } from "@/lib/data";
+import { categories, placeholderImage } from "@/lib/data";
+import { getProductsByCategory } from "@/lib/products";
 import { ShopGrid } from "@/components/product/ShopGrid";
 import { Reveal } from "@/components/layout/Reveal";
 import type { Product } from "@/lib/types";
@@ -34,8 +35,13 @@ export function generateStaticParams() {
   return categories.map((c) => ({ slug: c.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const cat = categories.find((c) => c.slug === params.slug);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const cat = categories.find((c) => c.slug === slug);
   if (!cat) return {};
   return {
     title: cat.name,
@@ -43,12 +49,13 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function CategoryPage({ params }: { params: { slug: string } }) {
-  const cat = categories.find((c) => c.slug === params.slug);
-  const map = CATEGORY_MAP[params.slug];
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const cat = categories.find((c) => c.slug === slug);
+  const map = CATEGORY_MAP[slug];
   if (!cat || !map) return notFound();
 
-  const items = products.filter((p) => p.category === map.name);
+  const items = await getProductsByCategory(map.name);
   const subcategories = Array.from(new Set(items.map((p) => p.subcategory)));
 
   return (

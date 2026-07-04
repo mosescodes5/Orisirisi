@@ -1,18 +1,25 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { products, getProductBySlug, getProductsByCategory, placeholderImage } from "@/lib/data";
+import { placeholderImage } from "@/lib/data";
+import { getProductBySlug, getProductsByCategory, getAllProductSlugs } from "@/lib/products";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductActions } from "@/components/product/ProductActions";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Reveal } from "@/components/layout/Reveal";
 
-export function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const slugs = await getAllProductSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const product = getProductBySlug(params.slug);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
   if (!product) return {};
   return {
     title: product.name,
@@ -32,8 +39,9 @@ const CATEGORY_SLUG: Record<string, string> = {
   Accessories: "other",
 };
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
-  const product = getProductBySlug(params.slug);
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
   if (!product) return notFound();
 
   const gallery = [
@@ -42,9 +50,8 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
     placeholderImage(`${product.image}-3`, 700, 875),
   ];
 
-  const related = getProductsByCategory(product.category)
-    .filter((p) => p.id !== product.id)
-    .slice(0, 4);
+  const relatedAll = await getProductsByCategory(product.category);
+  const related = relatedAll.filter((p) => p.id !== product.id).slice(0, 4);
 
   const categorySlug = CATEGORY_SLUG[product.category] ?? "household";
 

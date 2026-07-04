@@ -2,12 +2,9 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { ScrollProgress } from "@/components/layout/ScrollProgress";
+import { ConditionalChrome } from "@/components/layout/ConditionalChrome";
 import { CartProvider } from "@/lib/cart-context";
 import { WishlistProvider } from "@/lib/wishlist-context";
-import { CartDrawer } from "@/components/cart/CartDrawer";
 
 // Body font — exact match to the brand kit.
 const montserrat = Montserrat({
@@ -70,11 +67,7 @@ export default function RootLayout({
       <body className="flex min-h-screen flex-col bg-paper text-ink">
         <CartProvider>
           <WishlistProvider>
-            <ScrollProgress />
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <CartDrawer />
+            <ConditionalChrome>{children}</ConditionalChrome>
           </WishlistProvider>
         </CartProvider>
       </body>

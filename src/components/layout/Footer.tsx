@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Instagram, MessageCircle, Music2 } from "lucide-react";
 
 const SHOP_LINKS = [
+  { label: "All Categories", href: "/categories" },
   { label: "Household Items", href: "/category/household" },
   { label: "Jewelries", href: "/category/jewelry" },
   { label: "Clothing & Accessories", href: "/category/clothing" },

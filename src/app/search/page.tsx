@@ -1,18 +1,27 @@
 "use client";
 
-import { useMemo, Suspense } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { SearchX } from "lucide-react";
-import { products } from "@/lib/data";
+import { fetchAllPublishedProducts } from "@/lib/products-client";
+import type { Product } from "@/lib/types";
 import { ProductCard } from "@/components/product/ProductCard";
 
 function SearchResults() {
   const params = useSearchParams();
   const query = params.get("q")?.trim() ?? "";
 
+  const [products, setProducts] = useState<Product[] | null>(null);
+
+  useEffect(() => {
+    fetchAllPublishedProducts()
+      .then(setProducts)
+      .catch(() => setProducts([]));
+  }, []);
+
   const results = useMemo(() => {
-    if (!query) return [];
+    if (!query || !products) return [];
     const q = query.toLowerCase();
     return products.filter(
       (p) =>
@@ -21,7 +30,7 @@ function SearchResults() {
         p.subcategory.toLowerCase().includes(q) ||
         p.description.toLowerCase().includes(q)
     );
-  }, [query]);
+  }, [query, products]);
 
   return (
     <div className="px-5 py-14 sm:px-8 sm:py-16">
@@ -36,7 +45,7 @@ function SearchResults() {
           </p>
         )}
 
-        {query && results.length === 0 && (
+        {query && products && results.length === 0 && (
           <div className="mt-16 flex flex-col items-center text-center">
             <SearchX size={30} strokeWidth={1.4} className="text-mist" />
             <p className="mt-4 max-w-sm text-[14.5px] text-ink/60">
@@ -49,6 +58,12 @@ function SearchResults() {
             >
               Browse new in
             </Link>
+          </div>
+        )}
+
+        {query && !products && (
+          <div className="mt-16 flex flex-col items-center text-center text-[13.5px] text-ink/50">
+            Searching the assortment…
           </div>
         )}
 

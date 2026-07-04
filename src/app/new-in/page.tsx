@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { products, placeholderImage } from "@/lib/data";
+import { placeholderImage } from "@/lib/data";
+import { getNewProducts } from "@/lib/products";
 import { ShopGrid } from "@/components/product/ShopGrid";
 import { Reveal } from "@/components/layout/Reveal";
 
@@ -10,8 +11,8 @@ export const metadata: Metadata = {
   description: "The latest arrivals at Orísirísi with Taiwo — hand-picked and quality checked before it ships.",
 };
 
-export default function NewInPage() {
-  const items = products.filter((p) => p.isNew);
+export default async function NewInPage() {
+  const items = await getNewProducts();
   const subcategories = Array.from(new Set(items.map((p) => p.subcategory)));
 
   return (

@@ -86,6 +86,7 @@ export function Header() {
               <p className="mb-1.5 mt-5 px-4 text-xs font-bold uppercase tracking-widest text-mist">
                 Categories
               </p>
+              <MobileLink href="/categories">All Categories</MobileLink>
               {CATEGORY_STRIP.map((cat) => (
                 <MobileLink key={cat.href} href={cat.href}>{cat.label}</MobileLink>
               ))}

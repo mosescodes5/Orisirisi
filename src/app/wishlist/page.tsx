@@ -1,26 +1,35 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Heart, ArrowRight, ShoppingBag } from "lucide-react";
 import { useWishlist } from "@/lib/wishlist-context";
 import { useCart } from "@/lib/cart-context";
-import { getProductById } from "@/lib/data";
+import { fetchProductsByIds } from "@/lib/products-client";
+import type { Product } from "@/lib/types";
 import { ProductCard } from "@/components/product/ProductCard";
 
 export default function WishlistPage() {
   const { ids } = useWishlist();
   const { addItem, openDrawer } = useCart();
 
-  const products = useMemo(
-    () => ids.map((id) => getProductById(id)).filter((p): p is NonNullable<typeof p> => Boolean(p)),
-    [ids]
-  );
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchProductsByIds(ids)
+      .then(setProducts)
+      .catch(() => setProducts([]))
+      .finally(() => setLoading(false));
+  }, [ids]);
 
   function addAllToBag() {
     products.forEach((p) => addItem(p, 1));
     openDrawer();
   }
+
+  if (loading) return null;
 
   if (products.length === 0) {
     return (

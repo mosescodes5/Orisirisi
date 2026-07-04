@@ -4,10 +4,10 @@ import { ProductShelf } from "@/components/home/ProductShelf";
 import { TrustStrip } from "@/components/home/TrustStrip";
 import { Story } from "@/components/home/Story";
 import { Newsletter } from "@/components/home/Newsletter";
-import { getFeaturedProducts } from "@/lib/data";
+import { getFeaturedProducts } from "@/lib/products";
 
-export default function Home() {
-  const newIn = getFeaturedProducts(8);
+export default async function Home() {
+  const newIn = await getFeaturedProducts(8);
 
   return (
     <>

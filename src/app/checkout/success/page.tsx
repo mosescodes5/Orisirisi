@@ -4,8 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, ArrowRight, Package, Truck, Home, Copy, Check, Mail } from "lucide-react";
 import type { CompletedOrder } from "@/lib/types";
+import type { Product } from "@/lib/types";
 import { formatNaira } from "@/lib/format";
-import { products } from "@/lib/data";
+import { fetchAllPublishedProducts } from "@/lib/products-client";
 import { ProductCard } from "@/components/product/ProductCard";
 
 const ORDER_STORAGE_KEY = "orisirisi:last-order";
@@ -20,6 +21,13 @@ const TRACKING_STEPS = [
 export default function CheckoutSuccessPage() {
   const [order, setOrder] = useState<CompletedOrder | null | undefined>(undefined);
   const [copied, setCopied] = useState(false);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    fetchAllPublishedProducts()
+      .then(setAllProducts)
+      .catch(() => setAllProducts([]));
+  }, []);
 
   // sessionStorage isn't available on the server, so this has to be read in
   // an effect rather than during render (which would cause a hydration mismatch).
@@ -36,8 +44,8 @@ export default function CheckoutSuccessPage() {
   const recommendations = useMemo(() => {
     if (!order) return [];
     const purchasedIds = new Set(order.items.map((i) => i.productId));
-    return products.filter((p) => !purchasedIds.has(p.id)).slice(0, 4);
-  }, [order]);
+    return allProducts.filter((p) => !purchasedIds.has(p.id)).slice(0, 4);
+  }, [order, allProducts]);
 
   const deliveryWindow = useMemo(() => {
     if (!order) return null;

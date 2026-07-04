@@ -17,6 +17,7 @@ Open http://localhost:3000.
 ## What's here so far
 
 - `/` — homepage (hero, categories, new-in shelf, trust strip, brand story, newsletter)
+- `/categories` — full category directory (all categories, previews, item counts)
 - `/category/[slug]` — category listing with filters, sort, grid/list view
   (`household`, `jewelry`, `clothing`, `other`)
 - `/product/[slug]` — product detail page (gallery, size/quantity, add to bag,
@@ -26,9 +27,69 @@ Open http://localhost:3000.
 - `/checkout/success` — order confirmation, reads the completed order from
   `sessionStorage`
 - `/search` — client-side search over the product catalog
+- `/admin` — staff dashboard: products (CRUD) + orders (view/update status),
+  gated behind real Supabase Auth with role-based access (see below)
 
-Not built yet: wishlist page, blog. Ask for either next and they'll follow the
-same component patterns already in `src/components`.
+## Admin dashboard setup
+
+The admin dashboard (`/admin`) is backed by Supabase for both auth and data —
+it's the first part of this project with a real backend and real
+authentication (previously everything read from the mock `src/lib/data.ts`).
+
+1. **Create/open your Supabase project**, then in the SQL Editor run the
+   entire contents of [`supabase/schema.sql`](./supabase/schema.sql). It creates:
+   - `profiles` — extends `auth.users` with a `role` (`customer` | `staff` | `admin`);
+     a trigger auto-creates a `customer` profile on signup.
+   - `products` — the admin-manageable catalog (separate from `src/lib/data.ts`
+     for now — see note below).
+   - `orders` / `order_items` — order records the admin can view and update.
+   - Row Level Security policies so only `admin`/`staff` roles can write, and
+     only published products are publicly readable.
+
+2. **Add the Supabase keys** to `.env.local` (already stubbed in
+   `.env.local.example`):
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=
+   SUPABASE_SERVICE_ROLE_KEY=
+   ```
+   Find these under Supabase → Project Settings → API. **Never** expose the
+   service role key with a `NEXT_PUBLIC_` prefix — it's server-only and used
+   in `src/lib/admin/actions.ts` to bypass RLS for verified admin writes.
+
+3. **Create your admin account**: go to `/admin/login` and — since there's no
+   public sign-up form by design — instead create the user directly in
+   Supabase → Authentication → Users → "Add user" (set an email + password).
+   Signing up auto-creates a `profiles` row with `role = 'customer'`; promote
+   it to admin in the SQL Editor:
+   ```sql
+   update public.profiles set role = 'admin' where email = 'you@orisirisiwithtaiwo.com';
+   ```
+
+4. Sign in at `/admin/login`. Routes under `/admin/*` are protected by
+   `src/proxy.ts` (Next.js 16 renamed `middleware.ts` → `proxy.ts`), which
+   checks the Supabase session and the `profiles.role` on every request.
+
+**Note on data sources:** the storefront and admin dashboard now share the
+same Supabase `products` table — products created, edited, or unpublished in
+`/admin/products` show up (or disappear) on the storefront immediately, no
+rebuild needed. `src/lib/data.ts` still holds category definitions
+(household/jewelry/clothing/accessories) and blog content as static/mock
+data — only the product catalog moved to Supabase. Category item counts on
+the homepage and `/categories` are still the original static numbers rather
+than live counts; a small follow-up if you want those to reflect real stock.
+
+Storefront product reads go through `src/lib/products.ts` (server-only,
+public/anon Supabase client, no user session needed) for Server Components,
+and `src/lib/products-client.ts` (browser client) for the couple of
+Client Components that need product data — `/search` and `/wishlist`, both
+of which now show a brief loading state while they fetch. If Supabase is
+unreachable, these fail gracefully to an empty list rather than crashing the
+page or the build.
+
+**Remember to run `supabase/seed.sql`** after `schema.sql` if you want the
+original 12-item mock catalog to appear in Supabase — otherwise the shop
+starts empty until you add products in `/admin/products`.
 
 ## Deployment & infrastructure
 
