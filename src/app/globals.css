@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+/*
+  Brand tokens — locked to Orísirísi_with_Taiwo_Final.pdf.
+  Do not introduce new colors outside these four; use opacity/tints instead.
+
+  Display font: Beautique Display, self-hosted via next/font/local from
+  public/fonts/beautique-display (see src/app/layout.tsx). Licensed for this
+  project per License.pdf supplied with the font files — do not redistribute
+  the font files outside this codebase.
+*/
+
+@theme {
+  --color-ink: #000000;
+  --color-paper: #ffffff;
+  --color-mist: #adadad;
+  --color-orisirisi: #ef430b;
+
+  --font-display: var(--font-beautique), serif;
+  --font-body: var(--font-montserrat), sans-serif;
+
+  --radius-card: 1.1rem;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--color-orisirisi);
+    color: var(--color-paper);
+  }
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible {
+    outline: 2px solid var(--color-orisirisi);
+    outline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-orisirisi);
+  }
+  .input-field {
+    border-radius: 0.75rem;
+    border: 1.5px solid rgba(0, 0, 0, 0.14);
+    background: var(--color-paper);
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    transition: border-color 0.2s;
+  }
+  .input-field:focus {
+    border-color: var(--color-orisirisi);
+    outline: none;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Infinite marquee — the "assortment" signature motif, shared by header + CTA sections */
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee-scroll 32s linear infinite;
+}

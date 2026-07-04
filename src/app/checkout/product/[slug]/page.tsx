@@ -1,0 +1,87 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { products, getProductBySlug, getProductsByCategory, placeholderImage } from "@/lib/data";
+import { ProductGallery } from "@/components/product/ProductGallery";
+import { ProductActions } from "@/components/product/ProductActions";
+import { ProductCard } from "@/components/product/ProductCard";
+import { Reveal } from "@/components/layout/Reveal";
+
+export function generateStaticParams() {
+  return products.map((p) => ({ slug: p.slug }));
+}
+
+export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+  const product = getProductBySlug(params.slug);
+  if (!product) return {};
+  return {
+    title: product.name,
+    description: product.description,
+    openGraph: {
+      title: product.name,
+      description: product.description,
+      images: [placeholderImage(product.image, 800, 1000)],
+    },
+  };
+}
+
+const CATEGORY_SLUG: Record<string, string> = {
+  Household: "household",
+  Jewelry: "jewelry",
+  Clothing: "clothing",
+  Accessories: "other",
+};
+
+export default function ProductPage({ params }: { params: { slug: string } }) {
+  const product = getProductBySlug(params.slug);
+  if (!product) return notFound();
+
+  const gallery = [
+    placeholderImage(product.image, 700, 875),
+    placeholderImage(`${product.image}-2`, 700, 875),
+    placeholderImage(`${product.image}-3`, 700, 875),
+  ];
+
+  const related = getProductsByCategory(product.category)
+    .filter((p) => p.id !== product.id)
+    .slice(0, 4);
+
+  const categorySlug = CATEGORY_SLUG[product.category] ?? "household";
+
+  return (
+    <div className="px-5 py-10 sm:px-8 sm:py-14">
+      <div className="mx-auto max-w-[1320px]">
+        <p className="mb-8 text-xs font-semibold text-ink/60">
+          <Link href="/" className="hover:text-orisirisi">Home</Link> /{" "}
+          <Link href={`/category/${categorySlug}`} className="hover:text-orisirisi">{product.category}</Link> /{" "}
+          <span className="text-ink">{product.name}</span>
+        </p>
+
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-16">
+          <Reveal>
+            <ProductGallery images={gallery} alt={product.name} />
+          </Reveal>
+          <Reveal delay={0.1}>
+            <ProductActions product={product} />
+          </Reveal>
+        </div>
+
+        {related.length > 0 && (
+          <section className="mt-24">
+            <Reveal className="mb-9">
+              <p className="eyebrow">You Might Also Like</p>
+              <h2 className="mt-2 font-display text-[26px] font-medium sm:text-[32px]">
+                More from {product.category}
+              </h2>
+            </Reveal>
+            <div className="grid grid-cols-2 gap-6 sm:gap-7 md:grid-cols-4">
+              {related.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
+  );
+}
