@@ -8,16 +8,19 @@ import type { Product } from "@/lib/types";
 import { placeholderImage } from "@/lib/data";
 import { formatNaira } from "@/lib/format";
 import { useCart } from "@/lib/cart-context";
+import { useWishlist } from "@/lib/wishlist-context";
 
 export function ProductCard({ product, listView = false }: { product: Product; listView?: boolean }) {
-  const [wished, setWished] = useState(false);
   const [added, setAdded] = useState(false);
-  const { addItem } = useCart();
+  const { addItem, openDrawer } = useCart();
+  const { isWished, toggle } = useWishlist();
+  const wished = isWished(product.id);
 
   function handleAdd() {
     addItem(product, 1);
     setAdded(true);
     setTimeout(() => setAdded(false), 1600);
+    setTimeout(() => openDrawer(), 300);
   }
 
   return (
@@ -30,7 +33,7 @@ export function ProductCard({ product, listView = false }: { product: Product; l
         )}
         <button
           aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
-          onClick={() => setWished((v) => !v)}
+          onClick={() => toggle(product.id)}
           className="absolute right-3 top-3 z-10 flex h-8.5 w-8.5 items-center justify-center rounded-full bg-paper/90 transition-transform hover:scale-110"
         >
           <Heart size={16} strokeWidth={1.7} className={wished ? "fill-orisirisi stroke-orisirisi" : "stroke-ink"} />
@@ -46,7 +49,7 @@ export function ProductCard({ product, listView = false }: { product: Product; l
         </Link>
         <button
           onClick={handleAdd}
-          className="absolute bottom-3 left-3 right-3 z-10 translate-y-14 rounded-[10px] bg-ink py-3 text-center text-xs font-bold uppercase tracking-wide text-paper opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 hover:bg-orisirisi"
+          className="absolute bottom-3 left-3 right-3 z-10 rounded-[10px] bg-ink py-3 text-center text-xs font-bold uppercase tracking-wide text-paper transition-all duration-300 hover:bg-orisirisi sm:translate-y-14 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100"
         >
           {added ? (
             <span className="inline-flex items-center justify-center gap-1.5"><Check size={13} /> Added</span>

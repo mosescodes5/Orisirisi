@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Marquee } from "./Marquee";
 import { useCart } from "@/lib/cart-context";
+import { useWishlist } from "@/lib/wishlist-context";
 import { categories } from "@/lib/data";
 
 const CATEGORY_STRIP = categories.map((c) => ({ label: c.name, href: `/category/${c.slug}` }));
@@ -25,12 +26,16 @@ const CATEGORY_STRIP = categories.map((c) => ({ label: c.name, href: `/category/
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const { count } = useCart();
+  const { count, openDrawer } = useCart();
+  const { count: wishlistCount } = useWishlist();
   const router = useRouter();
   const pathname = usePathname();
 
-  // Close the mobile menu on route change — same behavior as rynts.
+  // Close the mobile menu on route change — same behavior as rynts. This has
+  // to be an effect since it's reacting to navigation, not to a value read
+  // during render.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: see above
     setMobileMenuOpen(false);
   }, [pathname]);
 
@@ -90,6 +95,7 @@ export function Header() {
               </p>
               <MobileLink href="/story">Our Story</MobileLink>
               <MobileLink href="/blog" icon={BookOpen}>Blog</MobileLink>
+              <MobileLink href="/wishlist" icon={Heart}>Wishlist</MobileLink>
               <MobileLink href="/help" icon={LifeBuoy}>Help</MobileLink>
               <MobileLink href="/account" icon={User}>Account</MobileLink>
             </div>
@@ -164,10 +170,15 @@ export function Header() {
                 className="relative flex h-10 w-10 items-center justify-center rounded-full text-ink transition-colors hover:bg-ink/[0.04] hover:text-orisirisi"
               >
                 <Heart size={19} strokeWidth={1.7} />
+                {wishlistCount > 0 && (
+                  <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-orisirisi text-[9px] font-bold text-paper">
+                    {wishlistCount > 9 ? "9+" : wishlistCount}
+                  </span>
+                )}
               </Link>
-              <Link
-                href="/cart"
-                aria-label="Cart"
+              <button
+                onClick={openDrawer}
+                aria-label="Open bag"
                 className="relative flex h-10 w-10 items-center justify-center rounded-full text-ink transition-colors hover:bg-ink/[0.04] hover:text-orisirisi"
               >
                 <ShoppingBag size={19} strokeWidth={1.7} />
@@ -176,7 +187,7 @@ export function Header() {
                     {count > 9 ? "9+" : count}
                   </span>
                 )}
-              </Link>
+              </button>
             </div>
           </div>
 

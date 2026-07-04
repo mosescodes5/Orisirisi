@@ -6,6 +6,8 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
 import { CartProvider } from "@/lib/cart-context";
+import { WishlistProvider } from "@/lib/wishlist-context";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 
 // Body font — exact match to the brand kit.
 const montserrat = Montserrat({
@@ -67,10 +69,13 @@ export default function RootLayout({
     <html lang="en" className={`${montserrat.variable} ${beautiqueDisplay.variable}`}>
       <body className="flex min-h-screen flex-col bg-paper text-ink">
         <CartProvider>
-          <ScrollProgress />
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <WishlistProvider>
+            <ScrollProgress />
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <CartDrawer />
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>

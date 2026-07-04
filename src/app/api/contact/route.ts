@@ -10,7 +10,10 @@ export async function POST(request: NextRequest) {
     }
 
     if (!isEmailConfigured() || !ADMIN_EMAIL) {
-      return NextResponse.json({ success: false, skipped: true, reason: "Email not configured" });
+      // Same as /api/newsletter: the form itself isn't broken, email
+      // delivery just isn't wired up yet in this environment — don't tell
+      // the customer their message failed to send.
+      return NextResponse.json({ success: true, skipped: true });
     }
 
     const result = await sendEmail({

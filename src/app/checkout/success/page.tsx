@@ -1,24 +1,62 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, ArrowRight } from "lucide-react";
+import { CheckCircle2, ArrowRight, Package, Truck, Home, Copy, Check, Mail } from "lucide-react";
 import type { CompletedOrder } from "@/lib/types";
 import { formatNaira } from "@/lib/format";
+import { products } from "@/lib/data";
+import { ProductCard } from "@/components/product/ProductCard";
 
 const ORDER_STORAGE_KEY = "orisirisi:last-order";
 
+const TRACKING_STEPS = [
+  { key: "placed", label: "Order Placed", icon: CheckCircle2 },
+  { key: "processing", label: "Processing", icon: Package },
+  { key: "shipped", label: "Shipped", icon: Truck },
+  { key: "delivered", label: "Delivered", icon: Home },
+] as const;
+
 export default function CheckoutSuccessPage() {
   const [order, setOrder] = useState<CompletedOrder | null | undefined>(undefined);
+  const [copied, setCopied] = useState(false);
 
+  // sessionStorage isn't available on the server, so this has to be read in
+  // an effect rather than during render (which would cause a hydration mismatch).
   useEffect(() => {
     try {
       const raw = window.sessionStorage.getItem(ORDER_STORAGE_KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: see above
       setOrder(raw ? JSON.parse(raw) : null);
     } catch {
       setOrder(null);
     }
   }, []);
+
+  const recommendations = useMemo(() => {
+    if (!order) return [];
+    const purchasedIds = new Set(order.items.map((i) => i.productId));
+    return products.filter((p) => !purchasedIds.has(p.id)).slice(0, 4);
+  }, [order]);
+
+  const deliveryWindow = useMemo(() => {
+    if (!order) return null;
+    const placed = new Date(order.placedAt);
+    const from = new Date(placed);
+    from.setDate(from.getDate() + 2);
+    const to = new Date(placed);
+    to.setDate(to.getDate() + 5);
+    const fmt = (d: Date) => d.toLocaleDateString("en-NG", { month: "short", day: "numeric" });
+    return `${fmt(from)} – ${fmt(to)}`;
+  }, [order]);
+
+  function copyReference() {
+    if (!order) return;
+    navigator.clipboard.writeText(order.reference).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    });
+  }
 
   if (order === undefined) return null; // avoid flash before hydration reads storage
 
@@ -49,9 +87,56 @@ export default function CheckoutSuccessPage() {
         <p className="mt-2.5 text-[14.5px] text-ink/60">
           Thank you, {order.shipping.fullName.split(" ")[0] || "friend"}. Taiwo is already getting your order ready.
         </p>
-        <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-mist">Reference: {order.reference}</p>
 
-        <div className="mt-10 rounded-card border border-ink/[0.08] p-6 text-left sm:p-7">
+        <button
+          onClick={copyReference}
+          className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-mist transition-colors hover:text-orisirisi"
+        >
+          {copied ? (
+            <>
+              <Check size={12} /> Copied
+            </>
+          ) : (
+            <>
+              Reference: {order.reference} <Copy size={12} />
+            </>
+          )}
+        </button>
+
+        <p className="mt-4 flex items-center justify-center gap-1.5 text-[12.5px] text-ink/50">
+          <Mail size={13} /> A confirmation was sent to {order.shipping.email}
+        </p>
+
+        {/* Order tracking timeline */}
+        <div className="mt-10 rounded-card border border-ink/[0.08] p-6 sm:p-7">
+          <div className="flex items-start justify-between">
+            {TRACKING_STEPS.map((step, i) => (
+              <div key={step.key} className="flex flex-1 flex-col items-center text-center">
+                <div className="flex w-full items-center">
+                  <div className={`h-[2px] flex-1 ${i === 0 ? "invisible" : "bg-orisirisi/20"}`} />
+                  <div
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
+                      i === 0 ? "bg-orisirisi text-paper" : "bg-ink/[0.06] text-ink/30"
+                    }`}
+                  >
+                    <step.icon size={16} strokeWidth={1.8} />
+                  </div>
+                  <div className={`h-[2px] flex-1 ${i === TRACKING_STEPS.length - 1 ? "invisible" : "bg-ink/[0.08]"}`} />
+                </div>
+                <span className={`mt-2.5 text-[10.5px] font-bold uppercase tracking-wide ${i === 0 ? "text-orisirisi" : "text-ink/40"}`}>
+                  {step.label}
+                </span>
+              </div>
+            ))}
+          </div>
+          {deliveryWindow && (
+            <p className="mt-6 text-[13px] text-ink/60">
+              Estimated delivery: <span className="font-semibold text-ink">{deliveryWindow}</span>
+            </p>
+          )}
+        </div>
+
+        <div className="mt-6 rounded-card border border-ink/[0.08] p-6 text-left sm:p-7">
           <h2 className="mb-4 text-sm font-bold uppercase tracking-wide">Order Summary</h2>
           <div className="flex flex-col gap-3">
             {order.items.map((item) => (
@@ -83,6 +168,17 @@ export default function CheckoutSuccessPage() {
           Continue shopping <ArrowRight size={14} />
         </Link>
       </div>
+
+      {recommendations.length > 0 && (
+        <div className="mx-auto mt-20 max-w-[1100px]">
+          <h2 className="text-center font-display text-2xl font-medium sm:text-[28px]">You might also like</h2>
+          <div className="mt-8 grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-4 sm:gap-x-6">
+            {recommendations.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

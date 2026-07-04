@@ -1,12 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { Loader2, ShieldCheck } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
-import { CheckoutForm } from "@/components/checkout/CheckoutForm";
+import { CheckoutForm, CHECKOUT_FORM_ID } from "@/components/checkout/CheckoutForm";
 import { CartSummary } from "@/components/cart/CartSummary";
+import { formatNaira } from "@/lib/format";
 
 export default function CheckoutPage() {
   const { items, subtotal, deliveryFee, total } = useCart();
+  const [submitting, setSubmitting] = useState(false);
 
   if (items.length === 0) {
     return (
@@ -24,16 +28,50 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="px-5 py-12 sm:px-8 sm:py-16">
+    <div className="px-5 py-12 pb-28 sm:px-8 sm:py-16 lg:pb-16">
       <div className="mx-auto max-w-[1100px]">
         <h1 className="font-display text-[30px] font-medium sm:text-[38px]">Checkout</h1>
 
-        <div className="mt-10 grid grid-cols-1 gap-12 md:grid-cols-[1fr_340px]">
-          <CheckoutForm />
-          <div className="md:sticky md:top-[110px] md:self-start">
-            <CartSummary subtotal={subtotal} deliveryFee={deliveryFee} total={total} />
-            <p className="mt-3 text-center text-xs text-mist">Complete the form to pay securely with Paystack.</p>
+        <div className="mt-10 grid grid-cols-1 gap-12 lg:grid-cols-[1fr_340px]">
+          <CheckoutForm onSubmittingChange={setSubmitting} />
+
+          <div className="lg:sticky lg:top-[110px] lg:self-start">
+            <CartSummary
+              subtotal={subtotal}
+              deliveryFee={deliveryFee}
+              total={total}
+              ctaLabel={submitting ? "Processing…" : "Pay with Paystack"}
+              ctaDisabled={submitting}
+              formId={CHECKOUT_FORM_ID}
+            />
+            <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-mist">
+              <ShieldCheck size={13} /> Secured by Paystack
+            </p>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile sticky pay bar — keeps the total and CTA reachable while filling in the form. */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-ink/[0.08] bg-paper/95 px-5 py-4 backdrop-blur-md lg:hidden">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-mist">Total</p>
+            <p className="text-base font-bold">{formatNaira(total)}</p>
+          </div>
+          <button
+            type="submit"
+            form={CHECKOUT_FORM_ID}
+            disabled={submitting}
+            className="flex items-center justify-center gap-2 rounded-full bg-ink px-7 py-3.5 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-ink"
+          >
+            {submitting ? (
+              <>
+                <Loader2 size={15} className="animate-spin" /> Processing…
+              </>
+            ) : (
+              "Pay Now"
+            )}
+          </button>
         </div>
       </div>
     </div>

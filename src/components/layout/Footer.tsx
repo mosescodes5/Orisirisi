@@ -9,16 +9,17 @@ const SHOP_LINKS = [
 ];
 
 const HELP_LINKS = [
-  { label: "Track My Order", href: "/track" },
-  { label: "Delivery Info", href: "/delivery" },
-  { label: "Returns Policy", href: "/returns" },
+  { label: "Track My Order", href: "/help#track" },
+  { label: "Delivery Info", href: "/help#delivery" },
+  { label: "Returns Policy", href: "/help#returns" },
   { label: "Contact Us", href: "/contact" },
 ];
 
 const ABOUT_LINKS = [
   { label: "Our Story", href: "/story" },
+  { label: "Blog", href: "/blog" },
   { label: "Instagram", href: "https://instagram.com" },
-  { label: "FAQs", href: "/faq" },
+  { label: "FAQs", href: "/help#faq" },
 ];
 
 export function Footer() {

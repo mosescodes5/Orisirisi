@@ -6,6 +6,7 @@ import { Heart, Minus, Plus, ChevronDown, Truck, RotateCcw, Check } from "lucide
 import type { Product } from "@/lib/types";
 import { formatNaira } from "@/lib/format";
 import { useCart } from "@/lib/cart-context";
+import { useWishlist } from "@/lib/wishlist-context";
 
 const SIZE_OPTIONS: Record<string, string[]> = {
   Clothing: ["XS", "S", "M", "L", "XL"],
@@ -15,9 +16,10 @@ const ease = [0.16, 0.84, 0.44, 1] as const;
 
 export function ProductActions({ product }: { product: Product }) {
   const [qty, setQty] = useState(1);
-  const [wished, setWished] = useState(false);
   const [added, setAdded] = useState(false);
-  const { addItem } = useCart();
+  const { addItem, openDrawer } = useCart();
+  const { isWished, toggle } = useWishlist();
+  const wished = isWished(product.id);
   const sizes = SIZE_OPTIONS[product.category];
   const [size, setSize] = useState(sizes?.[1] ?? null);
 
@@ -25,6 +27,7 @@ export function ProductActions({ product }: { product: Product }) {
     addItem(product, qty, size);
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
+    setTimeout(() => openDrawer(), 350);
   }
 
   return (
@@ -123,7 +126,7 @@ export function ProductActions({ product }: { product: Product }) {
 
         <motion.button
           aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
-          onClick={() => setWished((v) => !v)}
+          onClick={() => toggle(product.id)}
           whileTap={{ scale: 0.85 }}
           className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-[1.5px] border-ink/[0.14] transition-colors hover:border-orisirisi"
         >
@@ -145,14 +148,14 @@ export function ProductActions({ product }: { product: Product }) {
         </div>
         <div className="flex items-start gap-3 text-[13px] text-ink/70">
           <RotateCcw size={17} strokeWidth={1.6} className="mt-0.5 shrink-0 text-orisirisi" />
-          Easy 7-day returns if it's not quite right.
+          Easy 7-day returns if it&apos;s not quite right.
         </div>
       </div>
 
       <Accordion title="Delivery & Returns">
         Orders are dispatched within 48 hours of payment and delivered nationwide in 2–5 business
         days depending on location. Items can be returned within 7 days of delivery, provided
-        they're unused and in original packaging.
+        they&apos;re unused and in original packaging.
       </Accordion>
     </motion.div>
   );

@@ -46,3 +46,29 @@ export type CategoryDef = {
   itemCount: number;
   image: string;
 };
+
+export type BlogAuthor = {
+  name: string;
+  role: string;
+  avatar: string;
+  bio: string;
+};
+
+export type BlogBlock =
+  | { type: "paragraph"; text: string }
+  | { type: "heading"; text: string }
+  | { type: "quote"; text: string };
+
+export type BlogPost = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  coverImage: string;
+  author: BlogAuthor;
+  publishedAt: string;
+  readingTime: number;
+  featured?: boolean;
+  content: BlogBlock[];
+  tags?: string[];
+};
