@@ -6,7 +6,10 @@ export type Product = {
   subcategory: string;
   price: number;
   compareAtPrice?: number;
+  /** Legacy placeholder-image seed. Falls back to this only when `images` is empty. */
   image: string;
+  /** Real photo URLs from Supabase Storage, in display order — images[0] is the primary shot. */
+  images: string[];
   description: string;
   isNew?: boolean;
 };
@@ -54,10 +57,10 @@ export type BlogAuthor = {
   bio: string;
 };
 
-export type BlogBlock =
-  | { type: "paragraph"; text: string }
-  | { type: "heading"; text: string }
-  | { type: "quote"; text: string };
+// A Sanity Portable Text document — rendered with @portabletext/react.
+// Typed loosely rather than pulling in the full `sanity`/`@portabletext/types`
+// dependency tree just for this one field.
+export type PortableTextContent = Record<string, unknown>[];
 
 export type BlogPost = {
   slug: string;
@@ -69,6 +72,6 @@ export type BlogPost = {
   publishedAt: string;
   readingTime: number;
   featured?: boolean;
-  content: BlogBlock[];
+  content: PortableTextContent;
   tags?: string[];
 };

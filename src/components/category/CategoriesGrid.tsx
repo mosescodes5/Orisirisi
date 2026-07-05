@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { placeholderImage } from "@/lib/data";
+import { placeholderImage, productImage } from "@/lib/data";
 import { RevealStagger, revealItem } from "@/components/layout/Reveal";
 import type { CategoryDef, Product } from "@/lib/types";
 
@@ -47,7 +47,7 @@ export function CategoriesGrid({
 
               <div className="relative z-[2] flex flex-col gap-4 p-7 text-paper sm:p-8">
                 <div className="flex items-center justify-between gap-4">
-                  <p className="eyebrow text-paper opacity-75">{cat.itemCount} items</p>
+                  <p className="eyebrow text-paper opacity-75">{itemsInCategory.length} items</p>
                   {itemsInCategory.some((p) => p.isNew) && (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-orisirisi px-3 py-1 text-[10px] font-bold uppercase tracking-wide">
                       <Sparkles size={11} /> New in
@@ -68,7 +68,7 @@ export function CategoriesGrid({
                   <div className="flex gap-2.5">
                     {preview.map((p) => (
                       <div key={p.id} className="relative h-14 w-14 overflow-hidden rounded-[10px] ring-1 ring-paper/25">
-                        <Image src={placeholderImage(p.image, 120, 120)} alt={p.name} fill className="object-cover" />
+                        <Image src={productImage(p, 120, 120)} alt={p.name} fill className="object-cover" />
                       </div>
                     ))}
                   </div>

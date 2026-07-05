@@ -78,20 +78,33 @@ export async function deleteProduct(id: string) {
 }
 
 function productPayloadFromForm(formData: FormData) {
+  const slug = String(formData.get("slug") ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
+  let images: string[] = [];
+  try {
+    const raw = formData.get("images_json");
+    if (typeof raw === "string" && raw) images = JSON.parse(raw);
+  } catch {
+    images = [];
+  }
+
   return {
     name: String(formData.get("name") ?? ""),
-    slug: String(formData.get("slug") ?? "")
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, ""),
+    slug,
     category: String(formData.get("category") ?? "Household"),
     subcategory: String(formData.get("subcategory") ?? ""),
     price: Number(formData.get("price") ?? 0),
     compare_at_price: formData.get("compare_at_price")
       ? Number(formData.get("compare_at_price"))
       : null,
-    image: String(formData.get("image") ?? ""),
+    // Legacy placeholder seed — kept in sync with the slug so there's still a
+    // stable fallback image before the first real photo is uploaded.
+    image: slug,
+    images,
     description: String(formData.get("description") ?? ""),
     is_new: formData.get("is_new") === "on",
     is_published: formData.get("is_published") === "on",

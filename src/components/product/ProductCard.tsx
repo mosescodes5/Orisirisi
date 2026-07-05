@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart, Check } from "lucide-react";
 import type { Product } from "@/lib/types";
-import { placeholderImage } from "@/lib/data";
+import { productImage } from "@/lib/data";
 import { formatNaira } from "@/lib/format";
 import { useCart } from "@/lib/cart-context";
 import { useWishlist } from "@/lib/wishlist-context";
@@ -40,7 +40,7 @@ export function ProductCard({ product, listView = false }: { product: Product; l
         </button>
         <Link href={`/product/${product.slug}`}>
           <Image
-            src={placeholderImage(product.image, 500, 625)}
+            src={productImage(product, 500, 625)}
             alt={product.name}
             fill
             sizes="(min-width: 768px) 25vw, 50vw"

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { placeholderImage } from "@/lib/data";
+import { productImage, productGallery } from "@/lib/data";
 import { getProductBySlug, getProductsByCategory, getAllProductSlugs } from "@/lib/products";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductActions } from "@/components/product/ProductActions";
@@ -27,7 +27,7 @@ export async function generateMetadata({
     openGraph: {
       title: product.name,
       description: product.description,
-      images: [placeholderImage(product.image, 800, 1000)],
+      images: [productImage(product, 800, 1000)],
     },
   };
 }
@@ -44,11 +44,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const product = await getProductBySlug(slug);
   if (!product) return notFound();
 
-  const gallery = [
-    placeholderImage(product.image, 700, 875),
-    placeholderImage(`${product.image}-2`, 700, 875),
-    placeholderImage(`${product.image}-3`, 700, 875),
-  ];
+  const gallery = productGallery(product, 700, 875);
 
   const relatedAll = await getProductsByCategory(product.category);
   const related = relatedAll.filter((p) => p.id !== product.id).slice(0, 4);

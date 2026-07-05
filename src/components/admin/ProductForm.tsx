@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { AlertCircle, Save } from "lucide-react";
 import type { ActionResult } from "@/lib/admin/actions";
 import type { AdminProduct } from "@/lib/admin/types";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 
 const CATEGORIES = ["Household", "Jewelry", "Clothing", "Accessories"] as const;
 
@@ -96,15 +97,11 @@ export function ProductForm({
             className="input-field h-12 w-full"
           />
         </Field>
+      </div>
 
-        <Field label="Image seed" hint="Placeholder image key (e.g. orisirisi-p1) until real photos are wired up.">
-          <input
-            name="image"
-            defaultValue={product?.image}
-            className="input-field h-12 w-full"
-            placeholder="orisirisi-p1"
-          />
-        </Field>
+      <div className="flex flex-col gap-2">
+        <span className="text-xs font-bold uppercase tracking-wide text-ink/60">Product photos</span>
+        <ImageUploader initialImages={product?.images ?? []} />
       </div>
 
       <Field label="Description">

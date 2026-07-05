@@ -4,6 +4,7 @@ import { getProductsByIds } from "./products";
 import { createServiceRoleClient } from "./supabase/server";
 import { computeDeliveryFee } from "./pricing";
 import { sendOrderEmails } from "./order-emails";
+import { productImage } from "./data";
 import type { CartItem, CompletedOrder, ShippingDetails } from "./types";
 
 // Allow a tiny rounding tolerance (kobo) when comparing computed vs. charged amounts.
@@ -78,7 +79,7 @@ export async function verifyAndPersistOrder(
       productId: product.id,
       slug: product.slug,
       name: product.name,
-      image: product.image,
+      image: productImage(product, 300, 375),
       price: product.price,
       qty: Math.max(1, Math.floor(i.qty)),
       size: i.size ?? null,

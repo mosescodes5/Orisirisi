@@ -6,7 +6,7 @@ import { ShoppingBag, ArrowRight, X } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { CartLineItem } from "@/components/cart/CartLineItem";
 import { CartSummary } from "@/components/cart/CartSummary";
-import { placeholderImage } from "@/lib/data";
+import { resolveCartImage } from "@/lib/data";
 import { formatNaira } from "@/lib/format";
 
 export default function CartPage() {
@@ -62,7 +62,7 @@ export default function CartPage() {
                       className="flex gap-4 rounded-card border border-ink/[0.08] p-4"
                     >
                       <Link href={`/product/${item.slug}`} className="relative h-20 w-16 shrink-0 overflow-hidden rounded-lg bg-ink/[0.04]">
-                        <Image src={placeholderImage(item.image, 200, 250)} alt={item.name} fill className="object-cover" />
+                        <Image src={resolveCartImage(item.image, 200, 250)} alt={item.name} fill className="object-cover" />
                       </Link>
                       <div className="flex min-w-0 flex-1 flex-col justify-between">
                         <div className="flex items-start justify-between gap-2">

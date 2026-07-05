@@ -7,7 +7,7 @@ import Link from "next/link";
 import Script from "next/script";
 import { User, MapPin, Package, Pencil, AlertCircle } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
-import { placeholderImage } from "@/lib/data";
+import { resolveCartImage } from "@/lib/data";
 import { formatNaira } from "@/lib/format";
 import type { ShippingDetails } from "@/lib/types";
 
@@ -254,7 +254,7 @@ export function CheckoutForm({ onSubmittingChange }: { onSubmittingChange?: (sub
             {items.map((item) => (
               <div key={`${item.productId}-${item.size ?? ""}`} className="flex items-center gap-4">
                 <div className="relative h-16 w-14 shrink-0 overflow-hidden rounded-lg bg-ink/[0.04]">
-                  <Image src={placeholderImage(item.image, 200, 250)} alt={item.name} fill className="object-cover" />
+                  <Image src={resolveCartImage(item.image, 200, 250)} alt={item.name} fill className="object-cover" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-[13.5px] font-semibold">{item.name}</p>

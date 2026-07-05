@@ -1,6 +1,7 @@
 import "server-only";
 import { createAnonClient } from "./supabase/server";
 import { mapDbProduct } from "./product-mapper";
+import { CATEGORY_DB_NAME } from "./data";
 import type { Product } from "./types";
 
 /** Every published product, newest first — the base query everything else filters from. */
@@ -20,6 +21,28 @@ export async function getAllPublishedProducts(): Promise<Product[]> {
     // empty shelf is a much better failure mode than a 500 or a failed build.
     console.error("[products] getAllPublishedProducts failed:", err);
     return [];
+  }
+}
+
+/** Live published-product counts per category slug (household/jewelry/clothing/other), for category cards. */
+export async function getCategoryCounts(): Promise<Record<string, number>> {
+  try {
+    const supabase = createAnonClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select("category")
+      .eq("is_published", true);
+
+    if (error) throw new Error(error.message);
+
+    const counts: Record<string, number> = {};
+    for (const [slug, dbName] of Object.entries(CATEGORY_DB_NAME)) {
+      counts[slug] = (data ?? []).filter((row) => row.category === dbName).length;
+    }
+    return counts;
+  } catch (err) {
+    console.error("[products] getCategoryCounts failed:", err);
+    return {};
   }
 }
 

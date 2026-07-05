@@ -64,9 +64,9 @@ export default async function AdminProductsPage({
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-[8px] bg-ink/[0.05]">
-                          {p.image && (
+                          {(p.images[0] || p.image) && (
                             <Image
-                              src={`https://picsum.photos/seed/${p.image}/120/120`}
+                              src={p.images[0] || `https://picsum.photos/seed/${p.image}/120/120`}
                               alt={p.name}
                               fill
                               className="object-cover"
