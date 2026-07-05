@@ -68,6 +68,25 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   }
 }
 
+/** Look up specific products by id, for server-side order pricing verification. */
+export async function getProductsByIds(ids: string[]): Promise<Product[]> {
+  if (ids.length === 0) return [];
+  try {
+    const supabase = createAnonClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .in("id", ids)
+      .eq("is_published", true);
+
+    if (error) throw new Error(error.message);
+    return (data ?? []).map(mapDbProduct);
+  } catch (err) {
+    console.error("[products] getProductsByIds failed:", err);
+    return [];
+  }
+}
+
 /** Slugs for generateStaticParams — every published product gets a static page at build time. */
 export async function getAllProductSlugs(): Promise<string[]> {
   try {

@@ -9,7 +9,7 @@ import { User, MapPin, Package, Pencil, AlertCircle } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { placeholderImage } from "@/lib/data";
 import { formatNaira } from "@/lib/format";
-import type { CompletedOrder, ShippingDetails } from "@/lib/types";
+import type { ShippingDetails } from "@/lib/types";
 
 const NIGERIAN_STATES = [
   "Abia", "Abuja (FCT)", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue",
@@ -58,7 +58,7 @@ function validateAll(form: ShippingDetails): Partial<Record<FieldName, string>> 
 
 export function CheckoutForm({ onSubmittingChange }: { onSubmittingChange?: (submitting: boolean) => void }) {
   const router = useRouter();
-  const { items, subtotal, deliveryFee, total, clearCart } = useCart();
+  const { items, total, clearCart } = useCart();
   const [form, setForm] = useState<ShippingDetails>(emptyForm);
   const [touched, setTouched] = useState<Partial<Record<FieldName, boolean>>>({});
   const [scriptReady, setScriptReady] = useState(false);
@@ -114,32 +114,46 @@ export function CheckoutForm({ onSubmittingChange }: { onSubmittingChange?: (sub
       currency: "NGN",
       ref: reference,
       metadata: {
+        shipping: form,
+        items: items.map((i) => ({ productId: i.productId, qty: i.qty, size: i.size ?? null })),
         custom_fields: [
           { display_name: "Full Name", variable_name: "full_name", value: form.fullName },
           { display_name: "Phone", variable_name: "phone", value: form.phone },
         ],
       },
       callback: () => {
-        const order: CompletedOrder = {
-          reference,
-          items,
-          subtotal,
-          deliveryFee,
-          total,
-          shipping: form,
-          placedAt: new Date().toISOString(),
-        };
-        window.sessionStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(order));
+        (async () => {
+          try {
+            const res = await fetch("/api/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                reference,
+                shipping: form,
+                items: items.map((i) => ({ productId: i.productId, qty: i.qty, size: i.size ?? null })),
+              }),
+            });
+            const json = await res.json();
 
-        // Fire-and-forget — never block the redirect on email delivery.
-        fetch("/api/send-order-confirmation", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(order),
-        }).catch((err) => console.error("Order confirmation email failed:", err));
+            if (!res.ok || !json.success) {
+              throw new Error(
+                json.error ??
+                  "We couldn't confirm your payment automatically. Please contact us with your reference."
+              );
+            }
 
-        clearCart();
-        router.push(`/checkout/success?ref=${reference}`);
+            window.sessionStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(json.order));
+            clearCart();
+            router.push(`/checkout/success?ref=${reference}`);
+          } catch (err) {
+            setSubmitting(false);
+            setError(
+              err instanceof Error
+                ? `${err.message} Reference: ${reference}`
+                : `Something went wrong confirming your payment. Reference: ${reference}`
+            );
+          }
+        })();
       },
       onClose: () => {
         setSubmitting(false);

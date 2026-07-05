@@ -2,11 +2,10 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { CartItem, Product } from "@/lib/types";
+import { FREE_DELIVERY_THRESHOLD, computeDeliveryFee } from "@/lib/pricing";
 
 const STORAGE_KEY = "orisirisi:cart";
 const SAVED_STORAGE_KEY = "orisirisi:saved-for-later";
-const DELIVERY_FEE = 2500;
-const FREE_DELIVERY_THRESHOLD = 50000;
 
 type CartContextValue = {
   items: CartItem[];
@@ -146,7 +145,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     [items]
   );
 
-  const deliveryFee = items.length === 0 || subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
+  const deliveryFee = computeDeliveryFee(subtotal, items.length);
   const total = subtotal + deliveryFee;
 
   const value: CartContextValue = {
