@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState, type FormEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -66,9 +67,14 @@ export function Header() {
       >
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between border-b border-ink/[0.08] p-6">
-            <span className="font-display text-xl font-semibold">
-              Orísirísi<span className="text-orisirisi">.</span>
-            </span>
+            <Image
+              src="/brand/orisirisi-logo-horizontal.png"
+              alt="Orísirísi with Taiwo"
+              width={150}
+              height={50}
+              className="h-9 w-auto"
+              priority
+            />
             <button
               onClick={() => setMobileMenuOpen(false)}
               aria-label="Close menu"
@@ -115,13 +121,15 @@ export function Header() {
               >
                 <Menu size={24} />
               </button>
-              <Link href="/" className="flex flex-col leading-none">
-                <span className="font-display text-[22px] font-semibold tracking-tight sm:text-[26px]">
-                  Orísirísi<span className="text-orisirisi">.</span>
-                </span>
-                <span className="mt-1 hidden text-[9px] font-semibold uppercase tracking-[0.24em] text-mist sm:block">
-                  with Taiwo
-                </span>
+              <Link href="/" className="flex items-center">
+                <Image
+                  src="/brand/orisirisi-logo-horizontal.png"
+                  alt="Orísirísi with Taiwo"
+                  width={220}
+                  height={74}
+                  className="h-10 w-auto sm:h-11"
+                  priority
+                />
               </Link>
             </div>
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Instagram, MessageCircle, Music2 } from "lucide-react";
 
 const SHOP_LINKS = [
@@ -29,8 +30,17 @@ export function Footer() {
       <div className="mx-auto max-w-[1320px] px-5 sm:px-8">
         <div className="mb-14 grid grid-cols-2 gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
-            <div className="font-display text-2xl font-semibold">
-              Orísirísi<span className="text-orisirisi">.</span>
+            <div className="flex items-center gap-2.5">
+              <Image
+                src="/brand/orisirisi-icon-black.png"
+                alt=""
+                width={256}
+                height={256}
+                className="h-8 w-8"
+              />
+              <span className="font-display text-[17px] font-medium tracking-tight">
+                Orísirísi <span className="italic text-orisirisi">with Taiwo</span>
+              </span>
             </div>
             <p className="mt-3.5 max-w-[260px] text-[13px] leading-relaxed text-ink/60">
               A curated assortment of household items, jewelry, clothing and accessories — with Taiwo.

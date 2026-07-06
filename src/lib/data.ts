@@ -12,24 +12,47 @@ import type { CategoryDef, Product } from "./types";
 */
 
 export const categories: CategoryDef[] = [
-  { slug: "household", name: "Household Items", itemCount: 42, image: "orisirisi-cat-household" },
-  { slug: "jewelry", name: "Jewelries", itemCount: 67, image: "orisirisi-cat-jewelry" },
-  { slug: "clothing", name: "Clothing & Accessories", itemCount: 89, image: "orisirisi-cat-clothing" },
-  { slug: "other", name: "A Little Bit of Everything", itemCount: 31, image: "orisirisi-cat-other" },
+  {
+    slug: "household",
+    name: "Household Items",
+    itemCount: 42,
+    image: "orisirisi-cat-household",
+    productCategory: "Household",
+    blurb: "Pieces that make a house feel lived-in — décor, storage and everyday essentials.",
+    heroImage: "orisirisi-cat-hero-household",
+  },
+  {
+    slug: "jewelry",
+    name: "Jewelries",
+    itemCount: 67,
+    image: "orisirisi-cat-jewelry",
+    productCategory: "Jewelry",
+    blurb: "Necklaces, earrings and bangles that don't wait for an occasion.",
+    heroImage: "orisirisi-cat-hero-jewelry",
+  },
+  {
+    slug: "clothing",
+    name: "Clothing & Accessories",
+    itemCount: 89,
+    image: "orisirisi-cat-clothing",
+    productCategory: "Clothing",
+    blurb: "Everyday clothing and accessories, chosen the way Taiwo shops for herself.",
+    heroImage: "orisirisi-cat-hero-clothing",
+  },
+  {
+    slug: "other",
+    name: "A Little Bit of Everything",
+    itemCount: 31,
+    image: "orisirisi-cat-other",
+    productCategory: "Accessories",
+    blurb: "A little bit of everything — the pieces that don't fit a neat category.",
+    heroImage: "orisirisi-cat-hero-other",
+  },
 ];
 
 export function getCategoryBySlug(slug: string) {
   return categories.find((c) => c.slug === slug);
 }
-
-// Maps a category page/card slug to the DB `category` enum value. Shared by
-// getCategoryCounts() and any page that needs to go slug <-> DB category.
-export const CATEGORY_DB_NAME: Record<string, Product["category"]> = {
-  household: "Household",
-  jewelry: "Jewelry",
-  clothing: "Clothing",
-  other: "Accessories",
-};
 
 // Cheap placeholder image source — used as a fallback until a product has
 // real photos (see productImage/productGallery below).

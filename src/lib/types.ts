@@ -48,6 +48,10 @@ export type CategoryDef = {
   name: string;
   itemCount: number;
   image: string;
+  /** The Product["category"] value that this listing filters by. */
+  productCategory: "Household" | "Jewelry" | "Clothing" | "Accessories";
+  blurb: string;
+  heroImage: string;
 };
 
 export type BlogAuthor = {

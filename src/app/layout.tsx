@@ -56,6 +56,11 @@ export const metadata: Metadata = {
     siteName: "Orísirísi with Taiwo",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Orísirísi with Taiwo",
+    description: "Every sort of thing, curated. Household, jewelry, clothing & accessories.",
+  },
   robots: { index: true, follow: true },
 };
 

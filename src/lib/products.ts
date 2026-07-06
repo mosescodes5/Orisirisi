@@ -1,7 +1,7 @@
 import "server-only";
 import { createAnonClient } from "./supabase/server";
 import { mapDbProduct } from "./product-mapper";
-import { CATEGORY_DB_NAME } from "./data";
+import { categories } from "./data";
 import type { Product } from "./types";
 
 /** Every published product, newest first — the base query everything else filters from. */
@@ -36,8 +36,8 @@ export async function getCategoryCounts(): Promise<Record<string, number>> {
     if (error) throw new Error(error.message);
 
     const counts: Record<string, number> = {};
-    for (const [slug, dbName] of Object.entries(CATEGORY_DB_NAME)) {
-      counts[slug] = (data ?? []).filter((row) => row.category === dbName).length;
+    for (const cat of categories) {
+      counts[cat.slug] = (data ?? []).filter((row) => row.category === cat.productCategory).length;
     }
     return counts;
   } catch (err) {

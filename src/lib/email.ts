@@ -1,24 +1,40 @@
+import { Resend } from "resend";
 import nodemailer from "nodemailer";
 
 /*
-  Transactional email — sent via Hostinger SMTP through nodemailer.
+  Transactional email — Resend is the primary sender; Gmail SMTP (via
+  nodemailer) is an automatic fallback used only if Resend isn't configured
+  or a send attempt through it fails. Every call site just calls sendEmail()
+  and doesn't need to know which path actually delivered it.
 
   Required env vars (set in .env.local for dev, and in Vercel → Project →
   Settings → Environment Variables for production):
 
-    SMTP_HOST      smtp.hostinger.com
-    SMTP_PORT      465
-    SMTP_USER      the mailbox you created in hPanel, e.g. hello@orisirisiwithtaiwo.com
-    SMTP_PASSWORD  that mailbox's password
-    STORE_NAME     "Orísirísi with Taiwo"        (optional, has a default)
-    STORE_URL      https://orisirisiwithtaiwo.com (optional, has a default)
-    ADMIN_EMAIL    where order/subscriber notifications go (defaults to SMTP_USER)
+    RESEND_API_KEY     from resend.com/api-keys
+    RESEND_FROM_EMAIL  e.g. "Orísirísi with Taiwo <hello@orisirisiwithtaiwo.com>"
+                       — must be on a domain verified in Resend (Domains →
+                       Add Domain). Until verified, Resend only delivers to
+                       your own account's email address.
 
-  Nothing here is hardcoded to a real mailbox/password — unlike the reference
-  project this was adapted from, secrets only ever come from env vars.
+    SMTP_HOST          smtp.gmail.com
+    SMTP_PORT          465
+    SMTP_USER          your Gmail address
+    SMTP_PASSWORD      a Gmail App Password (myaccount.google.com/apppasswords)
+                       — requires 2-Step Verification on the account; your
+                       normal Gmail password will NOT work here.
+
+    STORE_NAME         "Orísirísi with Taiwo"        (optional, has a default)
+    STORE_URL          https://orisirisiwithtaiwo.com (optional, has a default)
+    ADMIN_EMAIL        where order/subscriber notifications go (defaults to SMTP_USER)
+
+  Nothing here is hardcoded to a real mailbox/key — secrets only ever come
+  from env vars.
 */
 
-const SMTP_HOST = process.env.SMTP_HOST || "smtp.hostinger.com";
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL;
+
+const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
 const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
 const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASSWORD = process.env.SMTP_PASSWORD;
@@ -27,14 +43,12 @@ const STORE_NAME = process.env.STORE_NAME || "Orísirísi with Taiwo";
 const STORE_URL = process.env.STORE_URL || "https://orisirisiwithtaiwo.com";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || SMTP_USER;
 
+const resendClient = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
+
 let cachedTransporter: nodemailer.Transporter | null = null;
 
-function getTransporter() {
-  if (!SMTP_USER || !SMTP_PASSWORD) {
-    throw new Error(
-      "Email is not configured — set SMTP_USER and SMTP_PASSWORD in your environment."
-    );
-  }
+function getGmailTransporter() {
+  if (!SMTP_USER || !SMTP_PASSWORD) return null;
   if (!cachedTransporter) {
     cachedTransporter = nodemailer.createTransport({
       host: SMTP_HOST,
@@ -58,29 +72,57 @@ export type SendEmailInput = {
 };
 
 export async function sendEmail({ to, subject, html, from, replyTo }: SendEmailInput) {
-  try {
-    const transporter = getTransporter();
-    const fromAddress = from || `"${STORE_NAME}" <${SMTP_USER}>`;
+  const text = html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 
+  // 1. Try Resend first, if it's configured.
+  if (resendClient && RESEND_FROM_EMAIL) {
+    try {
+      const { data, error } = await resendClient.emails.send({
+        from: from || RESEND_FROM_EMAIL,
+        to,
+        subject,
+        html,
+        text,
+        replyTo,
+      });
+      if (error) throw new Error(error.message);
+      return { success: true as const, messageId: data?.id, via: "resend" as const };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown Resend error";
+      console.error("sendEmail via Resend failed, falling back to Gmail SMTP:", message);
+      // fall through to Gmail below
+    }
+  }
+
+  // 2. Fall back to Gmail SMTP — either Resend isn't configured, or it just failed.
+  const transporter = getGmailTransporter();
+  if (!transporter) {
+    const reason = resendClient
+      ? "Resend failed and no Gmail SMTP fallback is configured."
+      : "Email is not configured — set RESEND_API_KEY or SMTP_USER/SMTP_PASSWORD.";
+    console.error("sendEmail failed:", reason);
+    return { success: false as const, error: reason };
+  }
+
+  try {
     const info = await transporter.sendMail({
-      from: fromAddress,
+      from: from || `"${STORE_NAME}" <${SMTP_USER}>`,
       to,
       subject,
       html,
-      text: html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim(),
+      text,
       replyTo,
     });
-
-    return { success: true as const, messageId: info.messageId };
+    return { success: true as const, messageId: info.messageId, via: "gmail" as const };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown email error";
-    console.error("sendEmail failed:", message);
+    const message = error instanceof Error ? error.message : "Unknown Gmail SMTP error";
+    console.error("sendEmail via Gmail SMTP failed:", message);
     return { success: false as const, error: message };
   }
 }
 
 export function isEmailConfigured() {
-  return Boolean(SMTP_USER && SMTP_PASSWORD);
+  return Boolean((resendClient && RESEND_FROM_EMAIL) || (SMTP_USER && SMTP_PASSWORD));
 }
 
 export { ADMIN_EMAIL, STORE_NAME, STORE_URL };

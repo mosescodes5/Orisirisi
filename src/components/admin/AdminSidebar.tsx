@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Package, ShoppingCart, LogOut, ExternalLink } from "lucide-react";
 import { signOutAdmin } from "@/lib/admin/actions";
@@ -17,10 +18,16 @@ export function AdminSidebar({ profile }: { profile: AdminProfile }) {
 
   return (
     <aside className="flex h-full w-[248px] shrink-0 flex-col border-r border-white/[0.08] bg-ink text-paper">
-      <div className="flex items-center gap-2 border-b border-white/[0.08] px-6 py-6">
-        <span className="font-display text-xl font-semibold">
-          Orísirísi<span className="text-orisirisi">.</span>
-        </span>
+      <div className="flex items-center gap-2.5 border-b border-white/[0.08] px-6 py-6">
+        <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-[8px] bg-paper p-1">
+          <Image
+            src="/brand/orisirisi-icon-black.png"
+            alt="Orísirísi with Taiwo"
+            width={256}
+            height={256}
+            className="h-full w-full object-contain"
+          />
+        </div>
         <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white/70">
           Admin
         </span>

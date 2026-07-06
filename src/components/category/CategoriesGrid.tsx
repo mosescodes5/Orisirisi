@@ -8,22 +8,17 @@ import { placeholderImage, productImage } from "@/lib/data";
 import { RevealStagger, revealItem } from "@/components/layout/Reveal";
 import type { CategoryDef, Product } from "@/lib/types";
 
-type CategoryMeta = { name: Product["category"]; blurb: string };
-
 export function CategoriesGrid({
   categories,
   products,
-  categoryMeta,
 }: {
   categories: CategoryDef[];
   products: Product[];
-  categoryMeta: Record<string, CategoryMeta>;
 }) {
   return (
     <RevealStagger className="grid grid-cols-1 gap-6 sm:grid-cols-2">
       {categories.map((cat) => {
-        const meta = categoryMeta[cat.slug];
-        const itemsInCategory = meta ? products.filter((p) => p.category === meta.name) : [];
+        const itemsInCategory = products.filter((p) => p.category === cat.productCategory);
         const preview = itemsInCategory.slice(0, 3);
 
         return (
@@ -57,11 +52,7 @@ export function CategoriesGrid({
 
                 <div>
                   <h2 className="font-display text-[28px] font-medium sm:text-[32px]">{cat.name}</h2>
-                  {meta && (
-                    <p className="mt-2 max-w-[380px] text-[13.5px] leading-relaxed opacity-85">
-                      {meta.blurb}
-                    </p>
-                  )}
+                  <p className="mt-2 max-w-[380px] text-[13.5px] leading-relaxed opacity-85">{cat.blurb}</p>
                 </div>
 
                 {preview.length > 0 && (
