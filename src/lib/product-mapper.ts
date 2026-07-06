@@ -9,7 +9,6 @@ export type DbProductRow = {
   price: number;
   compare_at_price: number | null;
   image: string;
-  images: string[] | null;
   description: string;
   is_new: boolean;
 };
@@ -24,7 +23,6 @@ export function mapDbProduct(row: DbProductRow): Product {
     price: row.price,
     compareAtPrice: row.compare_at_price ?? undefined,
     image: row.image,
-    images: row.images ?? [],
     description: row.description,
     isNew: row.is_new,
   };

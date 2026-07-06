@@ -4,18 +4,18 @@ import { ProductShelf } from "@/components/home/ProductShelf";
 import { TrustStrip } from "@/components/home/TrustStrip";
 import { Story } from "@/components/home/Story";
 import { Newsletter } from "@/components/home/Newsletter";
-import { getFeaturedProducts, getCategoryCounts } from "@/lib/products";
+import { getFeaturedProducts } from "@/lib/products";
 
 export default async function Home() {
-  const [newIn, categoryCounts] = await Promise.all([getFeaturedProducts(8), getCategoryCounts()]);
+  const newIn = await getFeaturedProducts(8);
 
   return (
     <>
       <h1 className="sr-only">
-        Orísirísi with Taiwo — Household Items, Jewelry, Clothing & Accessories
+        Orísirísi with Taiwo — Jewelry, Wristwatch, Household Items & Fresh Juice
       </h1>
       <Hero />
-      <Categories counts={categoryCounts} />
+      <Categories />
       <ProductShelf
         eyebrow="Fresh This Week"
         title="New in the assortment."

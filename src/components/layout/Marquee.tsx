@@ -1,4 +1,4 @@
-const ITEMS = ["Household Items", "Jewelry", "Clothing & Accessories", "Home Décor", "New Arrivals Weekly"];
+const ITEMS = ["Jewelry", "Wristwatch", "Household Items", "Fresh Juice", "New Arrivals Weekly"];
 
 export function Marquee() {
   const loop = [...ITEMS, ...ITEMS];

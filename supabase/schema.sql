@@ -15,29 +15,15 @@ create table if not exists public.profiles (
 
 alter table public.profiles enable row level security;
 
--- SECURITY DEFINER: checks a user's role while bypassing RLS internally, so
--- policies that need "is this user admin/staff?" never have to subquery
--- `profiles` under RLS themselves (which causes Postgres to re-apply
--- profiles' own policies to that subquery — infinite recursion).
-create or replace function public.is_admin_or_staff(uid uuid)
-returns boolean
-language sql
-security definer
-set search_path = public
-stable
-as $$
-  select exists (
-    select 1 from public.profiles where id = uid and role in ('admin', 'staff')
-  );
-$$;
-
 drop policy if exists "profiles: read own" on public.profiles;
 create policy "profiles: read own" on public.profiles
   for select using (auth.uid() = id);
 
 drop policy if exists "profiles: admin reads all" on public.profiles;
 create policy "profiles: admin reads all" on public.profiles
-  for select using (public.is_admin_or_staff(auth.uid()));
+  for select using (
+    exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin', 'staff'))
+  );
 
 -- Auto-create a profile row (role defaults to 'customer') whenever someone signs up.
 create or replace function public.handle_new_user()
@@ -66,12 +52,11 @@ create table if not exists public.products (
   id uuid primary key default gen_random_uuid(),
   slug text not null unique,
   name text not null,
-  category text not null check (category in ('Household', 'Jewelry', 'Clothing', 'Accessories')),
+  category text not null check (category in ('Household', 'Jewelry', 'Wristwatch', 'Fresh Juice')),
   subcategory text not null default '',
   price integer not null check (price >= 0), -- stored in kobo/naira as a whole number, matching src/lib/data.ts
   compare_at_price integer,
-  image text not null default '', -- legacy placeholder seed; used only as a fallback when `images` is empty
-  images text[] not null default '{}', -- real photo URLs (Supabase Storage), display order, images[0] is primary
+  image text not null default '',
   description text not null default '',
   is_new boolean not null default false,
   is_published boolean not null default true,
@@ -88,8 +73,11 @@ create policy "products: public reads published" on public.products
 
 drop policy if exists "products: staff full access" on public.products;
 create policy "products: staff full access" on public.products
-  for all using (public.is_admin_or_staff(auth.uid()))
-  with check (public.is_admin_or_staff(auth.uid()));
+  for all using (
+    exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin', 'staff'))
+  ) with check (
+    exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin', 'staff'))
+  );
 
 create or replace function public.set_updated_at()
 returns trigger as $$
@@ -129,8 +117,11 @@ alter table public.orders enable row level security;
 
 drop policy if exists "orders: staff full access" on public.orders;
 create policy "orders: staff full access" on public.orders
-  for all using (public.is_admin_or_staff(auth.uid()))
-  with check (public.is_admin_or_staff(auth.uid()));
+  for all using (
+    exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin', 'staff'))
+  ) with check (
+    exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin', 'staff'))
+  );
 
 create table if not exists public.order_items (
   id uuid primary key default gen_random_uuid(),
@@ -147,41 +138,13 @@ alter table public.order_items enable row level security;
 
 drop policy if exists "order_items: staff full access" on public.order_items;
 create policy "order_items: staff full access" on public.order_items
-  for all using (public.is_admin_or_staff(auth.uid()))
-  with check (public.is_admin_or_staff(auth.uid()));
+  for all using (
+    exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin', 'staff'))
+  ) with check (
+    exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin', 'staff'))
+  );
 
 -- Helpful indexes
 create index if not exists idx_products_category on public.products (category);
 create index if not exists idx_orders_status on public.orders (status);
 create index if not exists idx_order_items_order_id on public.order_items (order_id);
-
--- ---------------------------------------------------------------------------
--- 4. Product photography storage
--- ---------------------------------------------------------------------------
--- Public bucket: anyone can view product photos (needed for the storefront),
--- but only signed-in staff/admins can upload, replace, or delete them.
-insert into storage.buckets (id, name, public)
-values ('product-images', 'product-images', true)
-on conflict (id) do nothing;
-
-drop policy if exists "product-images: public read" on storage.objects;
-create policy "product-images: public read" on storage.objects
-  for select using (bucket_id = 'product-images');
-
-drop policy if exists "product-images: staff upload" on storage.objects;
-create policy "product-images: staff upload" on storage.objects
-  for insert with check (
-    bucket_id = 'product-images' and public.is_admin_or_staff(auth.uid())
-  );
-
-drop policy if exists "product-images: staff update" on storage.objects;
-create policy "product-images: staff update" on storage.objects
-  for update using (
-    bucket_id = 'product-images' and public.is_admin_or_staff(auth.uid())
-  );
-
-drop policy if exists "product-images: staff delete" on storage.objects;
-create policy "product-images: staff delete" on storage.objects
-  for delete using (
-    bucket_id = 'product-images' and public.is_admin_or_staff(auth.uid())
-  );

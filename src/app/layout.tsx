@@ -35,31 +35,27 @@ const beautiqueDisplay = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.orisirisi.com"),
   title: {
-    default: "Orísirísi with Taiwo — Household, Jewelry, Clothing & Accessories",
+    default: "Orísirísi with Taiwo — Jewelry, Wristwatch, Household Items & Fresh Juice",
     template: "%s — Orísirísi with Taiwo",
   },
   description:
-    "Orísirísi with Taiwo — a curated assortment of household items, jewelry, clothing and accessories, hand-checked before it ships. Nationwide delivery in Nigeria.",
+    "Orísirísi with Taiwo — a curated assortment of jewelry, wristwatches, household items and fresh juice, hand-checked before it ships. Nationwide delivery in Nigeria.",
   keywords: [
     "Orisirisi",
     "Taiwo",
-    "household items Nigeria",
     "jewelry Nigeria",
-    "clothing accessories Lagos",
+    "wristwatch Nigeria",
+    "household items Nigeria",
+    "fresh juice Lagos",
     "online shop Lagos",
     "variety store Nigeria",
   ],
   openGraph: {
     title: "Orísirísi with Taiwo",
-    description: "Every sort of thing, curated. Household, jewelry, clothing & accessories.",
+    description: "Every sort of thing, curated. Jewelry, wristwatch, household items & fresh juice.",
     url: "https://www.orisirisi.com",
     siteName: "Orísirísi with Taiwo",
     type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Orísirísi with Taiwo",
-    description: "Every sort of thing, curated. Household, jewelry, clothing & accessories.",
   },
   robots: { index: true, follow: true },
 };

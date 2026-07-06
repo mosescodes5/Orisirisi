@@ -16,7 +16,10 @@ export default function WishlistPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Effect (not derived state) because this is fetching from an external
+  // system (Supabase) in response to the wishlist id list changing.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: kicks off loading state for an external fetch
     setLoading(true);
     fetchProductsByIds(ids)
       .then(setProducts)
@@ -29,7 +32,13 @@ export default function WishlistPage() {
     openDrawer();
   }
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center px-5 py-28 text-center text-[13.5px] text-ink/50 sm:px-8">
+        Loading your wishlist…
+      </div>
+    );
+  }
 
   if (products.length === 0) {
     return (

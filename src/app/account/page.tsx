@@ -1,25 +1,13 @@
 import type { Metadata } from "next";
 import { AccountGate } from "@/components/account/AccountGate";
-import { AccountDashboard } from "@/components/account/AccountDashboard";
 import { Reveal } from "@/components/layout/Reveal";
-import { getCurrentCustomer } from "@/lib/customer/queries";
 
 export const metadata: Metadata = {
   title: "Account",
   description: "Sign in or create an Orísirísi with Taiwo account.",
 };
 
-export default async function AccountPage() {
-  const customer = await getCurrentCustomer();
-
-  if (customer) {
-    return (
-      <div className="px-5 py-16 sm:px-8 sm:py-20">
-        <AccountDashboard profile={customer} />
-      </div>
-    );
-  }
-
+export default function AccountPage() {
   return (
     <div className="px-5 py-16 sm:px-8 sm:py-20">
       <Reveal className="mx-auto max-w-[420px] text-center">

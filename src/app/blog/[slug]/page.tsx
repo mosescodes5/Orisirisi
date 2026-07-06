@@ -2,24 +2,20 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { Clock, ArrowRight, ChevronLeft } from "lucide-react";
-import { getBlogPosts, getBlogPostBySlug, getRelatedPosts } from "@/lib/blog";
-import { blogImage } from "@/lib/data";
+import { getBlogPosts, getBlogPostBySlug, getRelatedPosts, placeholderImage } from "@/lib/data";
 import { formatBlogDate } from "@/lib/format";
 import { AuthorCard } from "@/components/blog/AuthorCard";
 import { ShareButtons } from "@/components/blog/ShareButtons";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { Reveal } from "@/components/layout/Reveal";
 
-export async function generateStaticParams() {
-  const posts = await getBlogPosts();
-  return posts.map((p) => ({ slug: p.slug }));
+export function generateStaticParams() {
+  return getBlogPosts().map((p) => ({ slug: p.slug }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
+export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+  const post = getBlogPostBySlug(params.slug);
   if (!post) return {};
   return {
     title: post.title,
@@ -34,38 +30,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-const ptComponents: PortableTextComponents = {
-  block: {
-    h2: ({ children }) => (
-      <h2 className="mt-3 font-display text-xl font-medium sm:text-2xl">{children}</h2>
-    ),
-    blockquote: ({ children }) => (
-      <blockquote className="border-l-[3px] border-orisirisi py-1 pl-5 font-display text-lg italic leading-relaxed text-ink/80 sm:text-xl">
-        {children}
-      </blockquote>
-    ),
-    normal: ({ children }) => <p className="text-[15.5px] leading-[1.8] text-ink/75">{children}</p>,
-  },
-  marks: {
-    link: ({ children, value }) => (
-      <a
-        href={value?.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="font-semibold text-orisirisi underline underline-offset-2"
-      >
-        {children}
-      </a>
-    ),
-  },
-};
-
-export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
+export default function BlogPostPage({ params }: { params: { slug: string } }) {
+  const post = getBlogPostBySlug(params.slug);
   if (!post) return notFound();
 
-  const related = await getRelatedPosts(post);
+  const related = getRelatedPosts(post);
   const url = `https://www.orisirisi.com/blog/${post.slug}`;
 
   return (
@@ -95,7 +64,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
         <div className="relative mt-8 aspect-[16/10] overflow-hidden rounded-card bg-ink/[0.04]">
           <Image
-            src={blogImage(post.coverImage, 1200, 750)}
+            src={placeholderImage(post.coverImage, 1200, 750)}
             alt={post.title}
             fill
             priority
@@ -105,7 +74,30 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </div>
 
         <div className="mt-10 flex flex-col gap-5">
-          <PortableText value={post.content as never} components={ptComponents} />
+          {post.content.map((block, i) => {
+            if (block.type === "heading") {
+              return (
+                <h2 key={i} className="mt-3 font-display text-xl font-medium sm:text-2xl">
+                  {block.text}
+                </h2>
+              );
+            }
+            if (block.type === "quote") {
+              return (
+                <blockquote
+                  key={i}
+                  className="border-l-[3px] border-orisirisi py-1 pl-5 font-display text-lg italic leading-relaxed text-ink/80 sm:text-xl"
+                >
+                  {block.text}
+                </blockquote>
+              );
+            }
+            return (
+              <p key={i} className="text-[15.5px] leading-[1.8] text-ink/75">
+                {block.text}
+              </p>
+            );
+          })}
         </div>
 
         {post.tags && post.tags.length > 0 && (

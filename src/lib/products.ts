@@ -1,7 +1,6 @@
 import "server-only";
 import { createAnonClient } from "./supabase/server";
 import { mapDbProduct } from "./product-mapper";
-import { categories } from "./data";
 import type { Product } from "./types";
 
 /** Every published product, newest first — the base query everything else filters from. */
@@ -21,28 +20,6 @@ export async function getAllPublishedProducts(): Promise<Product[]> {
     // empty shelf is a much better failure mode than a 500 or a failed build.
     console.error("[products] getAllPublishedProducts failed:", err);
     return [];
-  }
-}
-
-/** Live published-product counts per category slug (household/jewelry/clothing/other), for category cards. */
-export async function getCategoryCounts(): Promise<Record<string, number>> {
-  try {
-    const supabase = createAnonClient();
-    const { data, error } = await supabase
-      .from("products")
-      .select("category")
-      .eq("is_published", true);
-
-    if (error) throw new Error(error.message);
-
-    const counts: Record<string, number> = {};
-    for (const cat of categories) {
-      counts[cat.slug] = (data ?? []).filter((row) => row.category === cat.productCategory).length;
-    }
-    return counts;
-  } catch (err) {
-    console.error("[products] getCategoryCounts failed:", err);
-    return {};
   }
 }
 
@@ -88,25 +65,6 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   } catch (err) {
     console.error("[products] getProductBySlug failed:", err);
     return null;
-  }
-}
-
-/** Look up specific products by id, for server-side order pricing verification. */
-export async function getProductsByIds(ids: string[]): Promise<Product[]> {
-  if (ids.length === 0) return [];
-  try {
-    const supabase = createAnonClient();
-    const { data, error } = await supabase
-      .from("products")
-      .select("*")
-      .in("id", ids)
-      .eq("is_published", true);
-
-    if (error) throw new Error(error.message);
-    return (data ?? []).map(mapDbProduct);
-  } catch (err) {
-    console.error("[products] getProductsByIds failed:", err);
-    return [];
   }
 }
 

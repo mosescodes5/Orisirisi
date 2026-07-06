@@ -29,10 +29,6 @@ Open http://localhost:3000.
 - `/search` — client-side search over the product catalog
 - `/admin` — staff dashboard: products (CRUD) + orders (view/update status),
   gated behind real Supabase Auth with role-based access (see below)
-- `/account` — real customer accounts (Supabase Auth): sign up/in, order
-  history, per-order detail — guest checkout still fully supported
-- `/api/webhooks/paystack` — independent server-to-server order confirmation
-  (see "Paystack webhook" below)
 
 ## Admin dashboard setup
 
@@ -51,7 +47,7 @@ authentication (previously everything read from the mock `src/lib/data.ts`).
      only published products are publicly readable.
 
 2. **Add the Supabase keys** to `.env.local` (already stubbed in
-   `.env.local.example`):
+   `.env.example`):
    ```
    NEXT_PUBLIC_SUPABASE_URL=
    NEXT_PUBLIC_SUPABASE_ANON_KEY=
@@ -95,6 +91,13 @@ page or the build.
 original 12-item mock catalog to appear in Supabase — otherwise the shop
 starts empty until you add products in `/admin/products`.
 
+**Already have products in Supabase from before the category taxonomy
+changed to Jewelry / Wristwatch / Household / Fresh Juice?** Run
+[`supabase/migrations/002_update_category_taxonomy.sql`](./supabase/migrations/002_update_category_taxonomy.sql)
+once in the SQL Editor — it folds any existing Clothing/Accessories products
+into Household and updates the constraint so `/admin` only accepts the new
+categories going forward.
+
 ## Deployment & infrastructure
 
 This project is set up to deploy on **Vercel**, with **Hostinger** as the
@@ -122,94 +125,63 @@ domain registrar and **Supabase** + **Sanity** as backing services:
 ## Paystack setup
 
 1. Copy `.env.example` to `.env.local`
-2. Add your Paystack keys (test keys are fine for development):
+2. Add your Paystack **public** key (test key is fine for development):
    ```
    NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY=pk_test_...
-   PAYSTACK_SECRET_KEY=sk_test_...
    ```
-3. `src/components/checkout/CheckoutForm.tsx` loads the Paystack inline
-   script and opens the payment popup using the public key.
+3. That's it for the client-side flow — `src/components/checkout/CheckoutForm.tsx`
+   loads the Paystack inline script and opens the payment popup.
 
-**Orders are verified and persisted server-side** — not just trusted from
-the client callback. See "Real orders" below for how `/api/verify-payment`
-confirms the transaction with Paystack directly, recomputes pricing from the
-live catalog, and saves the order.
+**Before going live, add server-side verification.** Right now, a successful
+payment is trusted purely on the client-side `callback`. For production you
+need an API route (e.g. `src/app/api/verify-payment/route.ts`) that calls
+Paystack's `GET /transaction/verify/:reference` with your **secret** key and
+confirms the amount/status server-side before you treat the order as paid —
+otherwise someone could fake a success callback. This also a good point to
+persist orders to a real database instead of `sessionStorage`.
 
-## Real orders (Paystack verification + persistence)
+## Email setup
 
-When the Paystack popup's `callback` fires, the browser calls
-`POST /api/verify-payment`, which:
+All transactional email (order confirmations, contact form, newsletter
+signup) goes through the single `sendEmail()` function in `src/lib/email.ts`
+— every API route reads through it, so it's the only file that needs to
+change if the provider changes again.
 
-1. **Verifies the transaction server-to-server** with Paystack
-   (`GET /transaction/verify/:reference`, using `PAYSTACK_SECRET_KEY`) —
-   confirms the payment actually succeeded rather than trusting the browser.
-2. **Recomputes pricing from the live Supabase catalog** — never trusts the
-   price/total sent from the client, since cart data lives in `localStorage`
-   and can be edited. If the recomputed total doesn't match what Paystack
-   actually charged (within a 1 kobo tolerance), the order is rejected as a
-   probable tampering attempt rather than recorded as paid.
-3. **Persists the order** to the `orders`/`order_items` tables (via the
-   service-role client — the customer isn't authenticated, so this is the
-   one place that intentionally bypasses RLS) — this is what makes orders
-   show up in `/admin/orders`.
-4. **Sends the confirmation emails** (customer + admin) itself, using the
-   authoritative saved order data — `src/app/api/send-order-confirmation`
-   still works standalone but is no longer called from checkout.
+It sends via **Resend** first, and automatically falls back to **Gmail
+SMTP** if Resend isn't configured or a send fails — so you can run one or
+both.
 
-It's idempotent: retrying the same `reference` (e.g. a flaky network
-response) returns the already-saved order instead of erroring or
-double-recording it.
-
-**Known limitation, now closed:** a Paystack webhook (below) provides a
-second, independent path to record the order if the client-side call above
-never happens (e.g. the customer closes their browser right after paying).
-
-## Paystack webhook
-
-`POST /api/webhooks/paystack` is a second, independent way for a payment to
-get recorded — it doesn't rely on the customer's browser doing anything
-after paying.
-
-**Set it up** in your Paystack dashboard → Settings → API Keys & Webhooks →
-Webhook URL: `https://yourdomain.com/api/webhooks/paystack`.
-
-How it works:
-- Verifies the `x-paystack-signature` header (HMAC-SHA512 of the raw body
-  using `PAYSTACK_SECRET_KEY`) before trusting anything in the payload.
-- On `charge.success`, calls the same `verifyAndPersistOrder()` function
-  used by `/api/verify-payment` — it's idempotent, so whichever path (the
-  browser's call or this webhook) gets there first wins, and the other just
-  returns the already-saved order rather than erroring or duplicating it.
-- Reads shipping/item details from the transaction's own Paystack
-  `metadata` (set when the payment was initialized in `CheckoutForm.tsx`)
-  rather than from the request body — that's what makes this self-sufficient
-  even if the client never calls `/api/verify-payment` at all.
-
-## Customer accounts
-
-`/account` now uses real Supabase Auth (same project as the admin
-dashboard, but customer sign-ups get `role = 'customer'` by default via the
-DB trigger in `schema.sql`). Signed-in customers see their order history and
-can open individual orders at `/account/orders/[reference]`.
-
-**Run `supabase/customer-accounts.sql`** once (after `schema.sql`) — it adds
-the RLS policies that let a customer read their own orders. Orders aren't
-linked to an account by id (guest checkout is still fully supported —
-there's no requirement to have an account to buy something); a signed-in
-customer's order history is matched by **email** instead, since checkout
-always collects one anyway.
-
-If your Supabase project has "Confirm email" enabled (the default), new
-sign-ups won't get a session immediately — `AccountGate` shows a "check your
-email" message in that case rather than silently failing.
+1. **Resend**: create an API key at
+   [resend.com/api-keys](https://resend.com/api-keys), then verify your
+   sending domain under Domains → Add Domain (until it's verified, Resend
+   will only deliver to the email address on your own Resend account — fine
+   for testing, not for real customers). Add to `.env.local`:
+   ```
+   RESEND_API_KEY=
+   RESEND_FROM_EMAIL="Orísirísi with Taiwo <hello@orisirisiwithtaiwo.com>"
+   ```
+2. **Gmail SMTP (fallback)**: turn on 2-Step Verification on the Google
+   account, then create an App Password at
+   [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)
+   — the regular account password won't work here. Add:
+   ```
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=465
+   SMTP_USER=
+   SMTP_PASSWORD=
+   ```
+3. Add the same keys in Vercel → Project → Settings → Environment Variables
+   before deploying, or production email will silently no-op (every route
+   checks `isEmailConfigured()` first and skips sending rather than failing
+   the request).
 
 ## Cart
 
-`src/lib/cart-context.tsx` is a React Context + `localStorage` cart. Order
-totals shown here are indicative — `/api/verify-payment` recomputes the
-authoritative total server-side from `src/lib/pricing.ts` (shared by both)
-before ever recording an order as paid, so a tampered `localStorage` cart
-can't be used to pay less than the real total.
+`src/lib/cart-context.tsx` is a React Context + `localStorage` cart — no
+backend required for the shopping flow to work end-to-end in development.
+When you add a real backend, swap this for whatever cart/session model it
+expects; every component reads through `useCart()`, so that's the only file
+that needs to change.
 
 ## Brand kit
 
@@ -237,6 +209,13 @@ since rynts already uses it, but nothing here assumes that choice.
 
 ## Images
 
-Product/category photos are placeholders from picsum.photos. Replace the
-`placeholderImage()` calls in `src/lib/data.ts` with real image URLs, and add
-your image host to `remotePatterns` in `next.config.ts`.
+Product/category/blog photos are now real, curated stock photos (Unsplash,
+free-to-use license) mapped from the same seed strings already stored on
+products/categories/blog posts — see `CURATED_IMAGES` in
+`src/lib/data.ts`, which `placeholderImage()` checks before falling back to
+picsum.photos for any unmapped seed. These are close thematic matches, not
+actual photography of your specific pieces — replace them with real product
+photography (and the founder/author photo, which is intentionally a
+hands-only shot rather than a stranger's face) before launch. Swapping in
+real photos just means changing the URLs in `CURATED_IMAGES` or the
+`image` column in Supabase — no component changes needed.

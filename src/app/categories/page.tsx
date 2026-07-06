@@ -6,11 +6,31 @@ import { categories, placeholderImage } from "@/lib/data";
 import { getAllPublishedProducts } from "@/lib/products";
 import { Reveal } from "@/components/layout/Reveal";
 import { CategoriesGrid } from "@/components/category/CategoriesGrid";
+import type { Product } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Shop by Category",
   description:
-    "Browse every category at Orísirísi with Taiwo — household items, jewelry, clothing and accessories, all hand-picked before they ship.",
+    "Browse every category at Orísirísi with Taiwo — jewelry, wristwatches, household items and fresh juice, all hand-picked before they ship.",
+};
+
+const CATEGORY_META: Record<string, { name: Product["category"]; blurb: string }> = {
+  jewelry: {
+    name: "Jewelry",
+    blurb: "Necklaces, earrings and bangles that don't wait for an occasion.",
+  },
+  wristwatch: {
+    name: "Wristwatch",
+    blurb: "Timepieces picked the same way as everything else here — worth the wrist space.",
+  },
+  household: {
+    name: "Household",
+    blurb: "Pieces that make a house feel lived-in — décor, storage and everyday essentials.",
+  },
+  "fresh-juice": {
+    name: "Fresh Juice",
+    blurb: "Cold-pressed and made fresh — nothing from concentrate.",
+  },
 };
 
 export default async function CategoriesPage() {
@@ -55,7 +75,7 @@ export default async function CategoriesPage() {
       {/* Category grid */}
       <section className="px-5 py-16 sm:px-8 sm:py-20">
         <div className="mx-auto max-w-[1320px]">
-          <CategoriesGrid categories={categories} products={products} />
+          <CategoriesGrid categories={categories} products={products} categoryMeta={CATEGORY_META} />
 
           <Reveal className="mt-16 flex flex-col items-center gap-3 rounded-[22px] border border-dashed border-ink/[0.14] px-8 py-10 text-center">
             <p className="eyebrow">Can&apos;t decide?</p>

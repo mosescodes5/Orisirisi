@@ -8,7 +8,7 @@ import { categories, placeholderImage } from "@/lib/data";
 import { Reveal, RevealStagger, revealItem } from "@/components/layout/Reveal";
 import { motion, useInView, animate } from "framer-motion";
 
-export function Categories({ counts }: { counts: Record<string, number> }) {
+export function Categories() {
   return (
     <section id="categories" className="px-5 py-24 sm:px-8 sm:py-[96px]">
       <div className="mx-auto max-w-[1320px]">
@@ -46,7 +46,7 @@ export function Categories({ counts }: { counts: Record<string, number> }) {
                 />
                 <div className="relative z-[2] w-full p-6.5 text-paper">
                   <p className="eyebrow text-paper opacity-75">
-                    <CountUp value={counts[cat.slug] ?? 0} /> items
+                    <CountUp value={cat.itemCount} /> items
                   </p>
                   <h3 className="mt-1.5 font-display text-[24px] font-medium">{cat.name}</h3>
                   <span className="mt-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-transform duration-300 group-hover:translate-x-1.5">

@@ -6,6 +6,30 @@ import { categories, placeholderImage } from "@/lib/data";
 import { getProductsByCategory } from "@/lib/products";
 import { ShopGrid } from "@/components/product/ShopGrid";
 import { Reveal } from "@/components/layout/Reveal";
+import type { Product } from "@/lib/types";
+
+const CATEGORY_MAP: Record<string, { name: Product["category"]; blurb: string; hero: string }> = {
+  jewelry: {
+    name: "Jewelry",
+    blurb: "Necklaces, earrings and bangles that don't wait for an occasion.",
+    hero: "orisirisi-cat-hero-jewelry",
+  },
+  wristwatch: {
+    name: "Wristwatch",
+    blurb: "Timepieces picked the same way as everything else here — worth the wrist space.",
+    hero: "orisirisi-cat-hero-wristwatch",
+  },
+  household: {
+    name: "Household",
+    blurb: "Pieces that make a house feel lived-in — décor, storage and everyday essentials.",
+    hero: "orisirisi-cat-hero-household",
+  },
+  "fresh-juice": {
+    name: "Fresh Juice",
+    blurb: "Cold-pressed and made fresh — nothing from concentrate.",
+    hero: "orisirisi-cat-hero-fresh-juice",
+  },
+};
 
 export function generateStaticParams() {
   return categories.map((c) => ({ slug: c.slug }));
@@ -28,16 +52,17 @@ export async function generateMetadata({
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const cat = categories.find((c) => c.slug === slug);
-  if (!cat) return notFound();
+  const map = CATEGORY_MAP[slug];
+  if (!cat || !map) return notFound();
 
-  const items = await getProductsByCategory(cat.productCategory);
+  const items = await getProductsByCategory(map.name);
   const subcategories = Array.from(new Set(items.map((p) => p.subcategory)));
 
   return (
     <>
       <section className="relative h-[300px] overflow-hidden">
         <Image
-          src={placeholderImage(cat.heroImage, 1600, 500)}
+          src={placeholderImage(map.hero, 1600, 500)}
           alt={cat.name}
           fill
           priority
@@ -49,7 +74,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               <Link href="/" className="transition-opacity hover:opacity-70">Home</Link> / <span>{cat.name}</span>
             </p>
             <h1 className="font-display text-[34px] font-medium sm:text-[46px] lg:text-[58px]">{cat.name}</h1>
-            <p className="mt-2.5 max-w-[460px] text-sm opacity-85">{cat.blurb}</p>
+            <p className="mt-2.5 max-w-[460px] text-sm opacity-85">{map.blurb}</p>
           </Reveal>
         </div>
         <style>{`

@@ -4,21 +4,26 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { placeholderImage, productImage } from "@/lib/data";
+import { placeholderImage } from "@/lib/data";
 import { RevealStagger, revealItem } from "@/components/layout/Reveal";
 import type { CategoryDef, Product } from "@/lib/types";
+
+type CategoryMeta = { name: Product["category"]; blurb: string };
 
 export function CategoriesGrid({
   categories,
   products,
+  categoryMeta,
 }: {
   categories: CategoryDef[];
   products: Product[];
+  categoryMeta: Record<string, CategoryMeta>;
 }) {
   return (
     <RevealStagger className="grid grid-cols-1 gap-6 sm:grid-cols-2">
       {categories.map((cat) => {
-        const itemsInCategory = products.filter((p) => p.category === cat.productCategory);
+        const meta = categoryMeta[cat.slug];
+        const itemsInCategory = meta ? products.filter((p) => p.category === meta.name) : [];
         const preview = itemsInCategory.slice(0, 3);
 
         return (
@@ -42,7 +47,9 @@ export function CategoriesGrid({
 
               <div className="relative z-[2] flex flex-col gap-4 p-7 text-paper sm:p-8">
                 <div className="flex items-center justify-between gap-4">
-                  <p className="eyebrow text-paper opacity-75">{itemsInCategory.length} items</p>
+                  <p className="eyebrow text-paper opacity-75">
+                    {itemsInCategory.length} item{itemsInCategory.length !== 1 ? "s" : ""}
+                  </p>
                   {itemsInCategory.some((p) => p.isNew) && (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-orisirisi px-3 py-1 text-[10px] font-bold uppercase tracking-wide">
                       <Sparkles size={11} /> New in
@@ -52,14 +59,18 @@ export function CategoriesGrid({
 
                 <div>
                   <h2 className="font-display text-[28px] font-medium sm:text-[32px]">{cat.name}</h2>
-                  <p className="mt-2 max-w-[380px] text-[13.5px] leading-relaxed opacity-85">{cat.blurb}</p>
+                  {meta && (
+                    <p className="mt-2 max-w-[380px] text-[13.5px] leading-relaxed opacity-85">
+                      {meta.blurb}
+                    </p>
+                  )}
                 </div>
 
                 {preview.length > 0 && (
                   <div className="flex gap-2.5">
                     {preview.map((p) => (
                       <div key={p.id} className="relative h-14 w-14 overflow-hidden rounded-[10px] ring-1 ring-paper/25">
-                        <Image src={productImage(p, 120, 120)} alt={p.name} fill className="object-cover" />
+                        <Image src={placeholderImage(p.image, 120, 120)} alt={p.name} fill className="object-cover" />
                       </div>
                     ))}
                   </div>

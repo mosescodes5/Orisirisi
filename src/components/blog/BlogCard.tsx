@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Clock } from "lucide-react";
 import type { BlogPost } from "@/lib/types";
-import { blogImage } from "@/lib/data";
+import { placeholderImage } from "@/lib/data";
 import { formatBlogDate } from "@/lib/format";
 
 export function BlogCard({ post }: { post: BlogPost }) {
@@ -13,7 +13,7 @@ export function BlogCard({ post }: { post: BlogPost }) {
           {post.category}
         </span>
         <Image
-          src={blogImage(post.coverImage, 500, 375)}
+          src={placeholderImage(post.coverImage, 500, 375)}
           alt={post.title}
           fill
           sizes="(min-width: 768px) 33vw, 100vw"

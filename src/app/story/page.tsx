@@ -25,7 +25,7 @@ const VALUES = [
   {
     icon: <Sparkles size={22} strokeWidth={1.6} />,
     title: "A little bit of everything, on purpose",
-    body: "Household, jewelry, clothing and accessories — sorted by taste, not by category, the way a good shelf actually works.",
+    body: "Household, jewelry, wristwatches and fresh juice — sorted by taste, not by category, the way a good shelf actually works.",
   },
   {
     icon: <Users size={22} strokeWidth={1.6} />,
@@ -36,7 +36,7 @@ const VALUES = [
 
 const MILESTONES = [
   { year: "2023", title: "The phone gallery", body: "A running album of things Taiwo kept buying for her own home — the seed of the assortment." },
-  { year: "2024", title: "First sorted shelf", body: "Household, jewelry and clothing organized into a proper catalogue, shared with friends first." },
+  { year: "2024", title: "First sorted shelf", body: "Household, jewelry and wristwatches organized into a proper catalogue, shared with friends first." },
   { year: "2025", title: "Orísirísi opens", body: "The shop goes live to everyone, with nationwide delivery across Nigeria." },
   { year: "2026", title: "The journal begins", body: "Sourcing notes, styling guides and Lagos life — the stories behind the shelf, written down." },
 ];
@@ -82,15 +82,15 @@ export default function StoryPage() {
             </h2>
             <p className="mt-5 max-w-[560px] text-[15.5px] leading-[1.8] text-ink/60">
               It started as a phone gallery full of things I couldn&apos;t stop buying — a lamp here, a necklace
-              there, a wrapper too nice not to share. Friends kept asking where things came from, then asking
+              there, a watch too nice not to share. Friends kept asking where things came from, then asking
               me to just buy one for them too. At some point that stopped being a favor and started being a
               shop.
             </p>
             <p className="mt-4 max-w-[560px] text-[15.5px] leading-[1.8] text-ink/60">
               Orísirísi is that gallery, sorted and made shoppable: household pieces that make a house feel
-              lived-in, jewelry that doesn&apos;t need an occasion, clothing and accessories I&apos;d wear
-              myself. Every item on this shelf passed through my hands first. That&apos;s the whole promise —
-              not a slogan, just how I&apos;d want to be shopped from.
+              lived-in, jewelry that doesn&apos;t need an occasion, a wristwatch worth the wrist space, fresh
+              juice made the way it should be. Every item on this shelf passed through my hands first. That&apos;s
+              the whole promise — not a slogan, just how I&apos;d want to be shopped from.
             </p>
             <p className="mt-5 font-display text-[22px] italic text-orisirisi">— Taiwo</p>
           </Reveal>
@@ -139,7 +139,7 @@ export default function StoryPage() {
         <Reveal className="relative z-[1] mx-auto max-w-[560px] text-center">
           <h2 className="font-display text-[28px] font-medium sm:text-[36px]">Come see the shelf.</h2>
           <p className="mt-3 text-[14.5px] text-paper/70">
-            Household, jewelry, clothing and accessories — hand-picked, one piece at a time.
+            Jewelry, wristwatch, household items and fresh juice — hand-picked, one piece at a time.
           </p>
           <Link
             href="/new-in"

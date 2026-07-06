@@ -11,12 +11,11 @@ export type AdminProduct = {
   id: string;
   slug: string;
   name: string;
-  category: "Household" | "Jewelry" | "Clothing" | "Accessories";
+  category: "Household" | "Jewelry" | "Wristwatch" | "Fresh Juice";
   subcategory: string;
   price: number;
   compare_at_price: number | null;
   image: string;
-  images: string[];
   description: string;
   is_new: boolean;
   is_published: boolean;

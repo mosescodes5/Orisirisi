@@ -1,12 +1,12 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Instagram, MessageCircle, Music2 } from "lucide-react";
 
 const SHOP_LINKS = [
   { label: "All Categories", href: "/categories" },
+  { label: "Jewelry", href: "/category/jewelry" },
+  { label: "Wristwatch", href: "/category/wristwatch" },
   { label: "Household Items", href: "/category/household" },
-  { label: "Jewelries", href: "/category/jewelry" },
-  { label: "Clothing & Accessories", href: "/category/clothing" },
+  { label: "Fresh Juice", href: "/category/fresh-juice" },
   { label: "New Arrivals", href: "/new-in" },
 ];
 
@@ -30,20 +30,11 @@ export function Footer() {
       <div className="mx-auto max-w-[1320px] px-5 sm:px-8">
         <div className="mb-14 grid grid-cols-2 gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
-            <div className="flex items-center gap-2.5">
-              <Image
-                src="/brand/orisirisi-icon-black.png"
-                alt=""
-                width={256}
-                height={256}
-                className="h-8 w-8"
-              />
-              <span className="font-display text-[17px] font-medium tracking-tight">
-                Orísirísi <span className="italic text-orisirisi">with Taiwo</span>
-              </span>
+            <div className="font-display text-2xl font-semibold">
+              Orísirísi<span className="text-orisirisi">.</span>
             </div>
             <p className="mt-3.5 max-w-[260px] text-[13px] leading-relaxed text-ink/60">
-              A curated assortment of household items, jewelry, clothing and accessories — with Taiwo.
+              A curated assortment of jewelry, wristwatches, household items and fresh juice — with Taiwo.
             </p>
             <div className="mt-5 flex gap-3">
               {[Instagram, Music2, MessageCircle].map((Icon, i) => (

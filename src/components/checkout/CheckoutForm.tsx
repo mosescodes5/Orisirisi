@@ -7,9 +7,9 @@ import Link from "next/link";
 import Script from "next/script";
 import { User, MapPin, Package, Pencil, AlertCircle } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
-import { resolveCartImage } from "@/lib/data";
+import { placeholderImage } from "@/lib/data";
 import { formatNaira } from "@/lib/format";
-import type { ShippingDetails } from "@/lib/types";
+import type { CompletedOrder, ShippingDetails } from "@/lib/types";
 
 const NIGERIAN_STATES = [
   "Abia", "Abuja (FCT)", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue",
@@ -58,7 +58,7 @@ function validateAll(form: ShippingDetails): Partial<Record<FieldName, string>> 
 
 export function CheckoutForm({ onSubmittingChange }: { onSubmittingChange?: (submitting: boolean) => void }) {
   const router = useRouter();
-  const { items, total, clearCart } = useCart();
+  const { items, subtotal, deliveryFee, total, clearCart } = useCart();
   const [form, setForm] = useState<ShippingDetails>(emptyForm);
   const [touched, setTouched] = useState<Partial<Record<FieldName, boolean>>>({});
   const [scriptReady, setScriptReady] = useState(false);
@@ -114,46 +114,32 @@ export function CheckoutForm({ onSubmittingChange }: { onSubmittingChange?: (sub
       currency: "NGN",
       ref: reference,
       metadata: {
-        shipping: form,
-        items: items.map((i) => ({ productId: i.productId, qty: i.qty, size: i.size ?? null })),
         custom_fields: [
           { display_name: "Full Name", variable_name: "full_name", value: form.fullName },
           { display_name: "Phone", variable_name: "phone", value: form.phone },
         ],
       },
       callback: () => {
-        (async () => {
-          try {
-            const res = await fetch("/api/verify-payment", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                reference,
-                shipping: form,
-                items: items.map((i) => ({ productId: i.productId, qty: i.qty, size: i.size ?? null })),
-              }),
-            });
-            const json = await res.json();
+        const order: CompletedOrder = {
+          reference,
+          items,
+          subtotal,
+          deliveryFee,
+          total,
+          shipping: form,
+          placedAt: new Date().toISOString(),
+        };
+        window.sessionStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(order));
 
-            if (!res.ok || !json.success) {
-              throw new Error(
-                json.error ??
-                  "We couldn't confirm your payment automatically. Please contact us with your reference."
-              );
-            }
+        // Fire-and-forget — never block the redirect on email delivery.
+        fetch("/api/send-order-confirmation", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(order),
+        }).catch((err) => console.error("Order confirmation email failed:", err));
 
-            window.sessionStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(json.order));
-            clearCart();
-            router.push(`/checkout/success?ref=${reference}`);
-          } catch (err) {
-            setSubmitting(false);
-            setError(
-              err instanceof Error
-                ? `${err.message} Reference: ${reference}`
-                : `Something went wrong confirming your payment. Reference: ${reference}`
-            );
-          }
-        })();
+        clearCart();
+        router.push(`/checkout/success?ref=${reference}`);
       },
       onClose: () => {
         setSubmitting(false);
@@ -254,7 +240,7 @@ export function CheckoutForm({ onSubmittingChange }: { onSubmittingChange?: (sub
             {items.map((item) => (
               <div key={`${item.productId}-${item.size ?? ""}`} className="flex items-center gap-4">
                 <div className="relative h-16 w-14 shrink-0 overflow-hidden rounded-lg bg-ink/[0.04]">
-                  <Image src={resolveCartImage(item.image, 200, 250)} alt={item.name} fill className="object-cover" />
+                  <Image src={placeholderImage(item.image, 200, 250)} alt={item.name} fill className="object-cover" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-[13.5px] font-semibold">{item.name}</p>

@@ -20,20 +20,22 @@ export function ProductGallery({ images, alt }: { images: string[]; alt: string 
 
   return (
     <div className="flex flex-col-reverse gap-4 sm:flex-row">
-      <div className="flex gap-3 sm:flex-col">
-        {images.map((src, i) => (
-          <button
-            key={src}
-            onClick={() => setActive(i)}
-            aria-label={`Show image ${i + 1}`}
-            className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-[1.5px] transition-all duration-200 hover:opacity-90 sm:h-20 sm:w-20 ${
-              active === i ? "border-orisirisi" : "border-ink/[0.12]"
-            }`}
-          >
-            <Image src={src} alt="" fill className="object-cover" />
-          </button>
-        ))}
-      </div>
+      {images.length > 1 && (
+        <div className="flex gap-3 sm:flex-col">
+          {images.map((src, i) => (
+            <button
+              key={src}
+              onClick={() => setActive(i)}
+              aria-label={`Show image ${i + 1}`}
+              className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-[1.5px] transition-all duration-200 hover:opacity-90 sm:h-20 sm:w-20 ${
+                active === i ? "border-orisirisi" : "border-ink/[0.12]"
+              }`}
+            >
+              <Image src={src} alt="" fill className="object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
 
       <div
         className="group relative aspect-[4/5] flex-1 cursor-zoom-in overflow-hidden rounded-card bg-ink/[0.04]"

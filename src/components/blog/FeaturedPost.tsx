@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Clock } from "lucide-react";
 import type { BlogPost } from "@/lib/types";
-import { blogImage } from "@/lib/data";
+import { placeholderImage } from "@/lib/data";
 import { formatBlogDate } from "@/lib/format";
 
 export function FeaturedPost({ post }: { post: BlogPost }) {
@@ -13,7 +13,7 @@ export function FeaturedPost({ post }: { post: BlogPost }) {
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-ink/[0.04] md:aspect-auto">
         <Image
-          src={blogImage(post.coverImage, 900, 700)}
+          src={placeholderImage(post.coverImage, 900, 700)}
           alt={post.title}
           fill
           priority

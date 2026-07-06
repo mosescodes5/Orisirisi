@@ -8,8 +8,11 @@ import { formatNaira } from "@/lib/format";
 import { useCart } from "@/lib/cart-context";
 import { useWishlist } from "@/lib/wishlist-context";
 
+// Keyed by subcategory, not top-level category — since Clothing/Accessories
+// items were folded into "Household", subcategory ("Tops", "Bags", etc.) is
+// the only thing left that reliably tells us a product needs sizing.
 const SIZE_OPTIONS: Record<string, string[]> = {
-  Clothing: ["XS", "S", "M", "L", "XL"],
+  Tops: ["XS", "S", "M", "L", "XL"],
 };
 
 const ease = [0.16, 0.84, 0.44, 1] as const;
@@ -20,7 +23,7 @@ export function ProductActions({ product }: { product: Product }) {
   const { addItem, openDrawer } = useCart();
   const { isWished, toggle } = useWishlist();
   const wished = isWished(product.id);
-  const sizes = SIZE_OPTIONS[product.category];
+  const sizes = SIZE_OPTIONS[product.subcategory];
   const [size, setSize] = useState(sizes?.[1] ?? null);
 
   function handleAdd() {

@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Minus, Plus, X, Heart, Trash2 } from "lucide-react";
 import type { CartItem } from "@/lib/types";
-import { resolveCartImage } from "@/lib/data";
+import { placeholderImage } from "@/lib/data";
 import { formatNaira } from "@/lib/format";
 import { useCart } from "@/lib/cart-context";
 
@@ -33,7 +33,7 @@ export function CartLineItem({ item, showSaveForLater = false }: { item: CartIte
   return (
     <div className="flex gap-4 border-b border-ink/[0.08] py-6 first:pt-0 sm:gap-6">
       <Link href={`/product/${item.slug}`} className="relative h-24 w-20 shrink-0 overflow-hidden rounded-xl bg-ink/[0.04] sm:h-28 sm:w-24">
-        <Image src={resolveCartImage(item.image, 300, 375)} alt={item.name} fill className="object-cover" />
+        <Image src={placeholderImage(item.image, 300, 375)} alt={item.name} fill className="object-cover" />
       </Link>
 
       <div className="flex flex-1 flex-col justify-between">

@@ -37,9 +37,10 @@ export function Story() {
           </h2>
           <p className="mt-5 max-w-[520px] text-[15.5px] leading-[1.8] text-ink/60">
             It started as a phone gallery full of things I couldn&apos;t stop buying — a lamp
-            here, a necklace there, a wrapper too nice not to share. Orísirísi is that gallery,
+            here, a necklace there, a watch too nice not to share. Orísirísi is that gallery,
             sorted and made shoppable: household pieces that make a house feel lived-in, jewelry
-            that doesn&apos;t need an occasion, clothing and accessories I&apos;d wear myself.
+            that doesn&apos;t need an occasion, a wristwatch worth the wrist space, fresh juice
+            made the way it should be.
           </p>
           <p className="mt-4 max-w-[520px] text-[15.5px] leading-[1.8] text-ink/60">
             Every item on this shelf passed through my hands first. That&apos;s the whole promise.

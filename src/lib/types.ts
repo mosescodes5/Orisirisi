@@ -2,14 +2,11 @@ export type Product = {
   id: string;
   slug: string;
   name: string;
-  category: "Household" | "Jewelry" | "Clothing" | "Accessories";
+  category: "Household" | "Jewelry" | "Wristwatch" | "Fresh Juice";
   subcategory: string;
   price: number;
   compareAtPrice?: number;
-  /** Legacy placeholder-image seed. Falls back to this only when `images` is empty. */
   image: string;
-  /** Real photo URLs from Supabase Storage, in display order — images[0] is the primary shot. */
-  images: string[];
   description: string;
   isNew?: boolean;
 };
@@ -48,10 +45,6 @@ export type CategoryDef = {
   name: string;
   itemCount: number;
   image: string;
-  /** The Product["category"] value that this listing filters by. */
-  productCategory: "Household" | "Jewelry" | "Clothing" | "Accessories";
-  blurb: string;
-  heroImage: string;
 };
 
 export type BlogAuthor = {
@@ -61,10 +54,10 @@ export type BlogAuthor = {
   bio: string;
 };
 
-// A Sanity Portable Text document — rendered with @portabletext/react.
-// Typed loosely rather than pulling in the full `sanity`/`@portabletext/types`
-// dependency tree just for this one field.
-export type PortableTextContent = Record<string, unknown>[];
+export type BlogBlock =
+  | { type: "paragraph"; text: string }
+  | { type: "heading"; text: string }
+  | { type: "quote"; text: string };
 
 export type BlogPost = {
   slug: string;
@@ -76,6 +69,6 @@ export type BlogPost = {
   publishedAt: string;
   readingTime: number;
   featured?: boolean;
-  content: PortableTextContent;
+  content: BlogBlock[];
   tags?: string[];
 };

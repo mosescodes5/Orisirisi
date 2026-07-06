@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { productImage, productGallery } from "@/lib/data";
+import { placeholderImage } from "@/lib/data";
 import { getProductBySlug, getProductsByCategory, getAllProductSlugs } from "@/lib/products";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductActions } from "@/components/product/ProductActions";
@@ -27,16 +27,16 @@ export async function generateMetadata({
     openGraph: {
       title: product.name,
       description: product.description,
-      images: [productImage(product, 800, 1000)],
+      images: [placeholderImage(product.image, 800, 1000)],
     },
   };
 }
 
 const CATEGORY_SLUG: Record<string, string> = {
-  Household: "household",
   Jewelry: "jewelry",
-  Clothing: "clothing",
-  Accessories: "other",
+  Wristwatch: "wristwatch",
+  Household: "household",
+  "Fresh Juice": "fresh-juice",
 };
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -44,7 +44,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const product = await getProductBySlug(slug);
   if (!product) return notFound();
 
-  const gallery = productGallery(product, 700, 875);
+  // Only one real photo exists per product right now, so the gallery shows
+  // just that — showing fabricated "-2"/"-3" variants would silently fall
+  // back to unrelated random photos for any product without real angles shot.
+  const gallery = [placeholderImage(product.image, 700, 875)];
 
   const relatedAll = await getProductsByCategory(product.category);
   const related = relatedAll.filter((p) => p.id !== product.id).slice(0, 4);

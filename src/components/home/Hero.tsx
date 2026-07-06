@@ -61,8 +61,8 @@ export function Hero() {
             className="mt-6.5 max-w-[440px] text-[16.5px] leading-[1.7] text-ink/60"
           >
             Orísirísi means variety — and that&apos;s exactly what this is. Household pieces, fine
-            jewelry, clothing and accessories, hand-picked by Taiwo so you never have to shop five
-            places for one home.
+            jewelry, wristwatches and fresh juice, hand-picked by Taiwo so you never have to shop
+            five places for one home.
           </motion.p>
 
           <motion.div
@@ -120,8 +120,8 @@ export function Hero() {
           />
           <FloatCard
             className="bottom-0 left-0 z-[3] h-[44%] w-[42%]"
-            src={placeholderImage("orisirisi-clothing", 600, 600)}
-            alt="Clothing and accessories"
+            src={placeholderImage("orisirisi-wristwatch", 600, 600)}
+            alt="Wristwatch"
             y={[0, -6, 0]}
             duration={6.5}
             parallaxX={sx}
