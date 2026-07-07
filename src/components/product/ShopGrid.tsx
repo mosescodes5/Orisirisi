@@ -116,7 +116,7 @@ export function ShopGrid({
                 onClick={() => setView("grid")}
                 aria-label="Grid view"
                 className={`flex h-8.5 w-8.5 items-center justify-center rounded-lg border-[1.5px] transition-colors ${
-                  view === "grid" ? "border-ink bg-ink text-paper" : "border-ink/[0.14] hover:border-orisirisi"
+                  view === "grid" ? "border-secondary bg-secondary text-paper" : "border-ink/[0.14] hover:border-orisirisi"
                 }`}
               >
                 <LayoutGrid size={15} />
@@ -125,7 +125,7 @@ export function ShopGrid({
                 onClick={() => setView("list")}
                 aria-label="List view"
                 className={`flex h-8.5 w-8.5 items-center justify-center rounded-lg border-[1.5px] transition-colors ${
-                  view === "list" ? "border-ink bg-ink text-paper" : "border-ink/[0.14] hover:border-orisirisi"
+                  view === "list" ? "border-secondary bg-secondary text-paper" : "border-ink/[0.14] hover:border-orisirisi"
                 }`}
               >
                 <List size={15} />
@@ -141,7 +141,7 @@ export function ShopGrid({
             <p className="mt-1 text-[13.5px] text-ink/60">Try widening your price range or clearing filters.</p>
             <button
               onClick={clearFilters}
-              className="mt-6 rounded-full bg-ink px-6 py-3 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
+              className="mt-6 rounded-full bg-secondary px-6 py-3 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
             >
               Clear all filters
             </button>
@@ -187,7 +187,7 @@ export function ShopGrid({
                 key={n}
                 onClick={() => setPage(n)}
                 className={`h-10 w-10 rounded-full border-[1.5px] text-[13px] font-bold transition-colors ${
-                  n === page ? "border-ink bg-ink text-paper" : "border-ink/[0.14] hover:border-orisirisi hover:text-orisirisi"
+                  n === page ? "border-secondary bg-secondary text-paper" : "border-ink/[0.14] hover:border-orisirisi hover:text-orisirisi"
                 }`}
               >
                 {n}

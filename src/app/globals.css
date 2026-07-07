@@ -1,8 +1,18 @@
 @import "tailwindcss";
 
 /*
-  Brand tokens — locked to Orísirísi_with_Taiwo_Final.pdf.
-  Do not introduce new colors outside these four; use opacity/tints instead.
+  Brand tokens.
+
+  --color-orisirisi (primary) and --color-secondary are controlled from the
+  admin "Brand Theme" page and overridden per-request as inline CSS vars on
+  <html> (see src/app/layout.tsx) — do not hardcode hex values elsewhere,
+  use these variables (or the bg-orisirisi/bg-secondary/text-orisirisi
+  utilities) so theme changes apply everywhere automatically.
+
+  --color-ink stays the fixed "text" role: headings, body copy, muted gray
+  (via opacity, e.g. text-ink/60), and hairline borders. It's intentionally
+  separate from --color-secondary (solid buttons, dark panels, active
+  states) so changing one never washes out ordinary reading text.
 
   Display font: Beautique Display, self-hosted via next/font/local from
   public/fonts/beautique-display (see src/app/layout.tsx). Licensed for this
@@ -15,6 +25,7 @@
   --color-paper: #ffffff;
   --color-mist: #adadad;
   --color-orisirisi: #ef430b;
+  --color-secondary: #000000;
 
   --font-display: var(--font-beautique), serif;
   --font-body: var(--font-montserrat), sans-serif;

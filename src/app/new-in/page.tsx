@@ -54,7 +54,7 @@ export default async function NewInPage() {
               <p className="mt-1 text-[13.5px] text-ink/60">Check back soon — the assortment updates often.</p>
               <Link
                 href="/category/household"
-                className="mt-6 rounded-full bg-ink px-6 py-3 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
+                className="mt-6 rounded-full bg-secondary px-6 py-3 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
               >
                 Browse everything
               </Link>

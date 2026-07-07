@@ -85,16 +85,16 @@ export async function getOrder(id: string): Promise<AdminOrderWithItems | null> 
   return { ...(order as AdminOrder), items: items ?? [] };
 }
 
-/** The primary/secondary brand colors currently applied to the storefront. */
+/** The primary/secondary/text brand colors currently applied to the storefront. */
 export async function getCurrentTheme(): Promise<ThemeColors> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("site_settings")
     .select("key, value")
-    .in("key", ["theme_primary", "theme_secondary"]);
+    .in("key", ["theme_primary", "theme_secondary", "theme_text"]);
 
   const row = (key: string) => data?.find((r) => r.key === key)?.value as string | undefined;
-  return sanitizeThemeColors({ primary: row("theme_primary"), secondary: row("theme_secondary") });
+  return sanitizeThemeColors({ primary: row("theme_primary"), secondary: row("theme_secondary"), text: row("theme_text") });
 }
 
 export async function getRecentOrders(limit = 5): Promise<AdminOrder[]> {

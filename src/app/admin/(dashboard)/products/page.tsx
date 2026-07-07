@@ -24,7 +24,7 @@ export default async function AdminProductsPage({
         </div>
         <Link
           href="/admin/products/new"
-          className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
+          className="inline-flex items-center gap-2 rounded-full bg-secondary px-6 py-3.5 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
         >
           <Plus size={15} /> New Product
         </Link>

@@ -53,7 +53,7 @@ export function Newsletter() {
           <button
             type="submit"
             disabled={status === "loading" || status === "submitted"}
-            className="rounded-full bg-ink px-7.5 py-3.5 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+            className="rounded-full bg-secondary px-7.5 py-3.5 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
           >
             {status === "submitted" ? "Subscribed ✓" : status === "loading" ? "Subscribing…" : "Subscribe"}
           </button>

@@ -54,7 +54,7 @@ function SearchResults() {
             </p>
             <Link
               href="/new-in"
-              className="mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-7 py-3.5 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-secondary px-7 py-3.5 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
             >
               Browse new in
             </Link>

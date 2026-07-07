@@ -135,7 +135,7 @@ export default function StoryPage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-ink px-5 py-20 text-paper sm:px-8">
+      <section className="relative overflow-hidden bg-secondary px-5 py-20 text-paper sm:px-8">
         <Reveal className="relative z-[1] mx-auto max-w-[560px] text-center">
           <h2 className="font-display text-[28px] font-medium sm:text-[36px]">Come see the shelf.</h2>
           <p className="mt-3 text-[14.5px] text-paper/70">

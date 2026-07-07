@@ -30,7 +30,7 @@ export function ProductShelf({
           {viewAllHref && (
             <Link
               href={viewAllHref}
-              className="group border-b-[1.5px] border-ink pb-1 text-[13px] font-bold uppercase tracking-wide transition-colors hover:border-orisirisi hover:text-orisirisi"
+              className="group border-b-[1.5px] border-secondary pb-1 text-[13px] font-bold uppercase tracking-wide transition-colors hover:border-orisirisi hover:text-orisirisi"
             >
               View all{" "}
               <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>

@@ -84,7 +84,7 @@ export default async function CategoriesPage() {
             </h3>
             <Link
               href="/new-in"
-              className="mt-2 inline-flex items-center gap-2 rounded-full bg-ink px-8 py-4 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
+              className="mt-2 inline-flex items-center gap-2 rounded-full bg-secondary px-8 py-4 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
             >
               Shop New In <ArrowRight size={14} />
             </Link>

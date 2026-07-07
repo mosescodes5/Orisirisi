@@ -45,7 +45,7 @@ export function AdminLoginForm({ next, notAuthorized }: { next: string; notAutho
       <button
         type="submit"
         disabled={pending}
-        className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-ink px-8 py-4 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi disabled:opacity-60"
+        className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-secondary px-8 py-4 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi disabled:opacity-60"
       >
         <LogIn size={14} />
         {pending ? "Signing in…" : "Sign in"}

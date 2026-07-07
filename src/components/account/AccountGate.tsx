@@ -21,7 +21,7 @@ export function AccountGate() {
             setSubmitted(false);
           }}
           className={`flex-1 rounded-full py-2.5 text-[12.5px] font-bold uppercase tracking-wide transition-colors ${
-            tab === "signin" ? "bg-ink text-paper" : "text-ink/60"
+            tab === "signin" ? "bg-secondary text-paper" : "text-ink/60"
           }`}
         >
           Sign In
@@ -32,7 +32,7 @@ export function AccountGate() {
             setSubmitted(false);
           }}
           className={`flex-1 rounded-full py-2.5 text-[12.5px] font-bold uppercase tracking-wide transition-colors ${
-            tab === "signup" ? "bg-ink text-paper" : "text-ink/60"
+            tab === "signup" ? "bg-secondary text-paper" : "text-ink/60"
           }`}
         >
           Create Account
@@ -85,7 +85,7 @@ export function AccountGate() {
 
           <button
             type="submit"
-            className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-ink px-8 py-4 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
+            className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-secondary px-8 py-4 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
           >
             {tab === "signin" ? <LogIn size={14} /> : <UserPlus size={14} />}
             {tab === "signin" ? "Sign in" : "Create account"}

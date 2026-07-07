@@ -66,7 +66,7 @@ export function ProductActions({ product }: { product: Product }) {
                 onClick={() => setSize(s)}
                 className={`flex h-10 min-w-10 items-center justify-center rounded-full border-[1.5px] px-3.5 text-[13px] font-semibold transition-all duration-200 ${
                   size === s
-                    ? "border-ink bg-ink text-paper"
+                    ? "border-secondary bg-secondary text-paper"
                     : "border-ink/[0.14] hover:border-orisirisi hover:text-orisirisi"
                 }`}
               >
@@ -98,7 +98,7 @@ export function ProductActions({ product }: { product: Product }) {
 
         <button
           onClick={handleAdd}
-          className="relative flex-1 overflow-hidden rounded-full bg-ink py-3.5 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
+          className="relative flex-1 overflow-hidden rounded-full bg-secondary py-3.5 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
         >
           <AnimatePresence mode="wait" initial={false}>
             {added ? (

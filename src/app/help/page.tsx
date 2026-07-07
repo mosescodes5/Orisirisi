@@ -121,7 +121,7 @@ export default function HelpPage() {
           </div>
           <Link
             href="/contact"
-            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-ink px-6 py-3 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-secondary px-6 py-3 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
           >
             Contact us <ArrowRight size={14} />
           </Link>

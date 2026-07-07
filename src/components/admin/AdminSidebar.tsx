@@ -17,7 +17,7 @@ export function AdminSidebar({ profile }: { profile: AdminProfile }) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full w-[248px] shrink-0 flex-col border-r border-white/[0.08] bg-ink text-paper">
+    <aside className="flex h-full w-[248px] shrink-0 flex-col border-r border-white/[0.08] bg-secondary text-paper">
       <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-6">
         <span className="flex flex-col leading-none">
           <span className="font-display text-xl font-semibold">

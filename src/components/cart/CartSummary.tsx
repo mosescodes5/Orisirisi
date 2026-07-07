@@ -68,7 +68,7 @@ export function CartSummary({
         <Link
           href={ctaHref}
           onClick={onCtaClick}
-          className="mt-6 block rounded-full bg-ink py-3.5 text-center text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
+          className="mt-6 block rounded-full bg-secondary py-3.5 text-center text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
         >
           {ctaLabel}
         </Link>
@@ -78,7 +78,7 @@ export function CartSummary({
           form={formId}
           onClick={onCta}
           disabled={ctaDisabled}
-          className="mt-6 w-full rounded-full bg-ink py-3.5 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-ink"
+          className="mt-6 w-full rounded-full bg-secondary py-3.5 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-secondary"
         >
           {ctaLabel}
         </button>

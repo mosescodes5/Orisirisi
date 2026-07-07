@@ -52,7 +52,7 @@ export default function WishlistPage() {
         </p>
         <Link
           href="/new-in"
-          className="mt-8 inline-flex items-center gap-2.5 rounded-full bg-ink px-8 py-4 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
+          className="mt-8 inline-flex items-center gap-2.5 rounded-full bg-secondary px-8 py-4 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
         >
           Start browsing <ArrowRight size={14} />
         </Link>
@@ -72,7 +72,7 @@ export default function WishlistPage() {
           </div>
           <button
             onClick={addAllToBag}
-            className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
+            className="inline-flex items-center gap-2 rounded-full bg-secondary px-6 py-3.5 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
           >
             <ShoppingBag size={15} /> Add all to bag
           </button>

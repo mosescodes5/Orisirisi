@@ -49,7 +49,7 @@ export function ProductCard({ product, listView = false }: { product: Product; l
         </Link>
         <button
           onClick={handleAdd}
-          className="absolute bottom-3 left-3 right-3 z-10 rounded-[10px] bg-ink py-3 text-center text-xs font-bold uppercase tracking-wide text-paper transition-all duration-300 hover:bg-orisirisi sm:translate-y-14 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100"
+          className="absolute bottom-3 left-3 right-3 z-10 rounded-[10px] bg-secondary py-3 text-center text-xs font-bold uppercase tracking-wide text-paper transition-all duration-300 hover:bg-orisirisi sm:translate-y-14 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100"
         >
           {added ? (
             <span className="inline-flex items-center justify-center gap-1.5"><Check size={13} /> Added</span>

@@ -13,7 +13,7 @@ const ITEMS = [
 
 export function TrustStrip() {
   return (
-    <section className="bg-ink px-5 py-14 text-paper sm:px-8">
+    <section className="bg-secondary px-5 py-14 text-paper sm:px-8">
       <RevealStagger className="mx-auto grid max-w-[1320px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {ITEMS.map(({ icon: Icon, title, body }, i) => (
           <motion.div

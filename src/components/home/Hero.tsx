@@ -73,7 +73,7 @@ export function Hero() {
           >
             <Link
               href="/new-in"
-              className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-full bg-ink px-8.5 py-4.5 text-[13px] font-bold uppercase tracking-wide text-paper transition-transform hover:-translate-y-0.5"
+              className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-full bg-secondary px-8.5 py-4.5 text-[13px] font-bold uppercase tracking-wide text-paper transition-transform hover:-translate-y-0.5"
             >
               <span className="absolute inset-0 -translate-x-full bg-orisirisi transition-transform duration-400 group-hover:translate-x-0" />
               <span className="relative flex items-center gap-2.5">
@@ -83,7 +83,7 @@ export function Hero() {
             </Link>
             <Link
               href="/story"
-              className="group inline-flex items-center gap-2 border-b-[1.5px] border-ink pb-1 text-[13px] font-bold uppercase tracking-wide transition-colors hover:border-orisirisi hover:text-orisirisi"
+              className="group inline-flex items-center gap-2 border-b-[1.5px] border-secondary pb-1 text-[13px] font-bold uppercase tracking-wide transition-colors hover:border-orisirisi hover:text-orisirisi"
             >
               Meet Taiwo
             </Link>

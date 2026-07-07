@@ -77,7 +77,7 @@ export default function CheckoutSuccessPage() {
         </p>
         <Link
           href="/"
-          className="mt-8 inline-flex items-center gap-2.5 rounded-full bg-ink px-8 py-4 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
+          className="mt-8 inline-flex items-center gap-2.5 rounded-full bg-secondary px-8 py-4 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
         >
           Back to shop
         </Link>
@@ -171,7 +171,7 @@ export default function CheckoutSuccessPage() {
 
         <Link
           href="/"
-          className="mt-9 inline-flex items-center gap-2.5 rounded-full bg-ink px-8 py-4 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
+          className="mt-9 inline-flex items-center gap-2.5 rounded-full bg-secondary px-8 py-4 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
         >
           Continue shopping <ArrowRight size={14} />
         </Link>

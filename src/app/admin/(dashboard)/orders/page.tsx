@@ -83,7 +83,7 @@ function FilterPill({ label, href, active }: { label: string; href: string; acti
     <Link
       href={href}
       className={`rounded-full px-4 py-2 text-[12px] font-bold uppercase tracking-wide transition-colors ${
-        active ? "bg-ink text-paper" : "bg-ink/[0.05] text-ink/60 hover:bg-ink/[0.1]"
+        active ? "bg-secondary text-paper" : "bg-ink/[0.05] text-ink/60 hover:bg-ink/[0.1]"
       }`}
     >
       {label}

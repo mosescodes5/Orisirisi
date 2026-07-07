@@ -143,7 +143,7 @@ export function Header() {
                 <button
                   type="submit"
                   aria-label="Search"
-                  className="absolute right-1.5 top-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-ink text-paper transition-colors hover:bg-orisirisi"
+                  className="absolute right-1.5 top-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-paper transition-colors hover:bg-orisirisi"
                 >
                   <Search size={15} />
                 </button>
@@ -210,7 +210,7 @@ export function Header() {
               <button
                 type="submit"
                 aria-label="Search"
-                className="absolute right-1.5 top-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-ink text-paper"
+                className="absolute right-1.5 top-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-paper"
               >
                 <Search size={15} />
               </button>

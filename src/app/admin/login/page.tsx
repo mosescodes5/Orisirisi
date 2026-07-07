@@ -11,7 +11,7 @@ export default async function AdminLoginPage({
   const params = await searchParams;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-ink px-5 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-secondary px-5 py-12">
       <div className="w-full max-w-[420px] rounded-[22px] bg-paper p-8 sm:p-10">
         <div className="mb-8 text-center">
           <span className="font-display text-2xl font-semibold">

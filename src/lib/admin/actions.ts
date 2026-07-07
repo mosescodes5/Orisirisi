@@ -119,8 +119,9 @@ export async function updateSiteTheme(_prevState: ActionResult | null, formData:
 
   const primary = String(formData.get("primary") ?? "");
   const secondary = String(formData.get("secondary") ?? "");
+  const text = String(formData.get("text") ?? "");
 
-  if (!isValidHexColor(primary) || !isValidHexColor(secondary)) {
+  if (!isValidHexColor(primary) || !isValidHexColor(secondary) || !isValidHexColor(text)) {
     return { ok: false, error: "Colors must be valid hex codes, e.g. #EF430B." };
   }
 
@@ -129,12 +130,13 @@ export async function updateSiteTheme(_prevState: ActionResult | null, formData:
   const { error } = await db.from("site_settings").upsert([
     { key: "theme_primary", value: primary, updated_at: now },
     { key: "theme_secondary", value: secondary, updated_at: now },
+    { key: "theme_text", value: text, updated_at: now },
   ]);
 
   if (error) return { ok: false, error: error.message };
 
-  // Both colors are read in the root layout, so every route (storefront
-  // and admin) needs to re-render with the new values.
+  // All three colors are read in the root layout, so every route
+  // (storefront and admin) needs to re-render with the new values.
   revalidatePath("/", "layout");
   return { ok: true };
 }

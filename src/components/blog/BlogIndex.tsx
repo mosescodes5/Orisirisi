@@ -25,7 +25,7 @@ export function BlogIndex({ posts, categories }: { posts: BlogPost[]; categories
           <button
             onClick={() => setCategory(null)}
             className={`whitespace-nowrap rounded-full border-[1.5px] px-4 py-2 text-[12.5px] font-bold transition-colors ${
-              category === null ? "border-ink bg-ink text-paper" : "border-ink/[0.14] hover:border-orisirisi hover:text-orisirisi"
+              category === null ? "border-secondary bg-secondary text-paper" : "border-ink/[0.14] hover:border-orisirisi hover:text-orisirisi"
             }`}
           >
             All
@@ -35,7 +35,7 @@ export function BlogIndex({ posts, categories }: { posts: BlogPost[]; categories
               key={c}
               onClick={() => setCategory(c)}
               className={`whitespace-nowrap rounded-full border-[1.5px] px-4 py-2 text-[12.5px] font-bold transition-colors ${
-                category === c ? "border-ink bg-ink text-paper" : "border-ink/[0.14] hover:border-orisirisi hover:text-orisirisi"
+                category === c ? "border-secondary bg-secondary text-paper" : "border-ink/[0.14] hover:border-orisirisi hover:text-orisirisi"
               }`}
             >
               {c}

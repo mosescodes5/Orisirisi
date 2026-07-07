@@ -26,7 +26,7 @@ export async function AccountDashboard({ profile }: { profile: CustomerProfile }
         <form action={signOutCustomer}>
           <button
             type="submit"
-            className="inline-flex items-center gap-2 rounded-full border border-ink/[0.14] px-5 py-2.5 text-[12px] font-bold uppercase tracking-wide text-ink/70 transition-colors hover:bg-ink hover:text-paper"
+            className="inline-flex items-center gap-2 rounded-full border border-ink/[0.14] px-5 py-2.5 text-[12px] font-bold uppercase tracking-wide text-ink/70 transition-colors hover:bg-secondary hover:text-paper"
           >
             <LogOut size={13} /> Sign out
           </button>
@@ -44,7 +44,7 @@ export async function AccountDashboard({ profile }: { profile: CustomerProfile }
             <p className="text-[14px] text-ink/60">No orders yet.</p>
             <Link
               href="/new-in"
-              className="mt-1 inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
+              className="mt-1 inline-flex items-center gap-2 rounded-full bg-secondary px-6 py-3 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
             >
               Start shopping
             </Link>

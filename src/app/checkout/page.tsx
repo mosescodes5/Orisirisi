@@ -19,7 +19,7 @@ export default function CheckoutPage() {
         <p className="mt-2.5 max-w-sm text-[14.5px] text-ink/60">Your bag is empty — add something first.</p>
         <Link
           href="/new-in"
-          className="mt-8 inline-flex items-center gap-2.5 rounded-full bg-ink px-8 py-4 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
+          className="mt-8 inline-flex items-center gap-2.5 rounded-full bg-secondary px-8 py-4 text-[13px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi"
         >
           Start shopping
         </Link>
@@ -62,7 +62,7 @@ export default function CheckoutPage() {
             type="submit"
             form={CHECKOUT_FORM_ID}
             disabled={submitting}
-            className="flex items-center justify-center gap-2 rounded-full bg-ink px-7 py-3.5 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-ink"
+            className="flex items-center justify-center gap-2 rounded-full bg-secondary px-7 py-3.5 text-[12.5px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-orisirisi disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-secondary"
           >
             {submitting ? (
               <>
