@@ -10,7 +10,6 @@ export function AccountGate() {
   const [signInState, signInAction, signInPending] = useActionState(signInCustomer, null);
 
   const state = tab === "signup" ? signUpState : signInState;
-  const pending = tab === "signup" ? signUpPending : signInPending;
 
   if (state?.ok && "needsConfirmation" in state && state.needsConfirmation) {
     return (

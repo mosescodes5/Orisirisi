@@ -23,6 +23,14 @@ export async function POST(request: NextRequest) {
       replyTo: email,
     });
 
+    if (!result.success) {
+      console.error("contact route: email failed to send:", result.error);
+      return NextResponse.json(
+        { success: false, error: "Your message couldn't be sent — please try again or email us directly." },
+        { status: 502 }
+      );
+    }
+
     return NextResponse.json({ success: true, result });
   } catch (error) {
     console.error("contact route error:", error);
