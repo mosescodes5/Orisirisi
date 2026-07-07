@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { getCurrentAdminProfile } from "./queries";
 import type { OrderStatus } from "./types";
-import { THEME_PALETTES } from "@/lib/theme-palettes";
+import { isValidHexColor } from "@/lib/theme-palettes";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
@@ -117,20 +117,24 @@ export async function updateOrderStatus(id: string, status: OrderStatus) {
 export async function updateSiteTheme(_prevState: ActionResult | null, formData: FormData): Promise<ActionResult> {
   await requireAdmin();
 
-  const paletteId = String(formData.get("paletteId") ?? "");
-  if (!THEME_PALETTES.some((p) => p.id === paletteId)) {
-    return { ok: false, error: "That palette doesn't exist." };
+  const primary = String(formData.get("primary") ?? "");
+  const secondary = String(formData.get("secondary") ?? "");
+
+  if (!isValidHexColor(primary) || !isValidHexColor(secondary)) {
+    return { ok: false, error: "Colors must be valid hex codes, e.g. #EF430B." };
   }
 
   const db = createServiceRoleClient();
-  const { error } = await db
-    .from("site_settings")
-    .upsert({ key: "theme_palette_id", value: paletteId, updated_at: new Date().toISOString() });
+  const now = new Date().toISOString();
+  const { error } = await db.from("site_settings").upsert([
+    { key: "theme_primary", value: primary, updated_at: now },
+    { key: "theme_secondary", value: secondary, updated_at: now },
+  ]);
 
   if (error) return { ok: false, error: error.message };
 
-  // The accent color is read in the root layout, so every route (storefront
-  // and admin) needs to re-render with the new value.
+  // Both colors are read in the root layout, so every route (storefront
+  // and admin) needs to re-render with the new values.
   revalidatePath("/", "layout");
   return { ok: true };
 }

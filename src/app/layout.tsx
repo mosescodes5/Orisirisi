@@ -70,7 +70,7 @@ export default async function RootLayout({
     <html
       lang="en"
       className={`${montserrat.variable} ${beautiqueDisplay.variable}`}
-      style={{ "--color-orisirisi": theme.accent } as React.CSSProperties}
+      style={{ "--color-orisirisi": theme.primary, "--color-ink": theme.secondary } as React.CSSProperties}
     >
       <body className="flex min-h-screen flex-col bg-paper text-ink">
         <CartProvider>

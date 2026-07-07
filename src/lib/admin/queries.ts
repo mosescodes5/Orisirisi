@@ -1,7 +1,7 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import type { AdminOrder, AdminOrderWithItems, AdminProduct, AdminProfile } from "./types";
-import { getPaletteById, type ThemePalette } from "@/lib/theme-palettes";
+import { sanitizeThemeColors, type ThemeColors } from "@/lib/theme-palettes";
 
 /** The signed-in admin/staff user's profile, or null if not signed in / not staff. */
 export async function getCurrentAdminProfile(): Promise<AdminProfile | null> {
@@ -85,16 +85,16 @@ export async function getOrder(id: string): Promise<AdminOrderWithItems | null> 
   return { ...(order as AdminOrder), items: items ?? [] };
 }
 
-/** The brand accent palette currently applied to the storefront. */
-export async function getCurrentPalette(): Promise<ThemePalette> {
+/** The primary/secondary brand colors currently applied to the storefront. */
+export async function getCurrentTheme(): Promise<ThemeColors> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("site_settings")
-    .select("value")
-    .eq("key", "theme_palette_id")
-    .maybeSingle();
+    .select("key, value")
+    .in("key", ["theme_primary", "theme_secondary"]);
 
-  return getPaletteById(data?.value as string | undefined);
+  const row = (key: string) => data?.find((r) => r.key === key)?.value as string | undefined;
+  return sanitizeThemeColors({ primary: row("theme_primary"), secondary: row("theme_secondary") });
 }
 
 export async function getRecentOrders(limit = 5): Promise<AdminOrder[]> {
