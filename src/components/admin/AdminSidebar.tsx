@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, ExternalLink } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Palette, LogOut, ExternalLink } from "lucide-react";
 import { signOutAdmin } from "@/lib/admin/actions";
 import type { AdminProfile } from "@/lib/admin/types";
 
@@ -10,6 +10,7 @@ const NAV = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
   { label: "Products", href: "/admin/products", icon: Package },
   { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
+  { label: "Brand Theme", href: "/admin/settings/theme", icon: Palette },
 ];
 
 export function AdminSidebar({ profile }: { profile: AdminProfile }) {

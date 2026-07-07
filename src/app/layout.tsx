@@ -5,6 +5,7 @@ import "./globals.css";
 import { ConditionalChrome } from "@/components/layout/ConditionalChrome";
 import { CartProvider } from "@/lib/cart-context";
 import { WishlistProvider } from "@/lib/wishlist-context";
+import { getSiteTheme } from "@/lib/theme";
 
 // Body font — exact match to the brand kit.
 const montserrat = Montserrat({
@@ -60,11 +61,17 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const theme = await getSiteTheme();
+
   return (
-    <html lang="en" className={`${montserrat.variable} ${beautiqueDisplay.variable}`}>
+    <html
+      lang="en"
+      className={`${montserrat.variable} ${beautiqueDisplay.variable}`}
+      style={{ "--color-orisirisi": theme.accent } as React.CSSProperties}
+    >
       <body className="flex min-h-screen flex-col bg-paper text-ink">
         <CartProvider>
           <WishlistProvider>

@@ -1,6 +1,7 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import type { AdminOrder, AdminOrderWithItems, AdminProduct, AdminProfile } from "./types";
+import { getPaletteById, type ThemePalette } from "@/lib/theme-palettes";
 
 /** The signed-in admin/staff user's profile, or null if not signed in / not staff. */
 export async function getCurrentAdminProfile(): Promise<AdminProfile | null> {
@@ -82,6 +83,18 @@ export async function getOrder(id: string): Promise<AdminOrderWithItems | null> 
 
   const { data: items } = await supabase.from("order_items").select("*").eq("order_id", id);
   return { ...(order as AdminOrder), items: items ?? [] };
+}
+
+/** The brand accent palette currently applied to the storefront. */
+export async function getCurrentPalette(): Promise<ThemePalette> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("site_settings")
+    .select("value")
+    .eq("key", "theme_palette_id")
+    .maybeSingle();
+
+  return getPaletteById(data?.value as string | undefined);
 }
 
 export async function getRecentOrders(limit = 5): Promise<AdminOrder[]> {

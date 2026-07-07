@@ -62,6 +62,12 @@ export type AdminOrder = {
 
 export type AdminOrderWithItems = AdminOrder & { items: AdminOrderItem[] };
 
+export type SiteSettingRow = {
+  key: string;
+  value: string;
+  updated_at: string;
+};
+
 export const ORDER_STATUSES: OrderStatus[] = [
   "pending",
   "paid",

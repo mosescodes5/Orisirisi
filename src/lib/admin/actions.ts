@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { getCurrentAdminProfile } from "./queries";
 import type { OrderStatus } from "./types";
+import { THEME_PALETTES } from "@/lib/theme-palettes";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
@@ -109,4 +110,27 @@ export async function updateOrderStatus(id: string, status: OrderStatus) {
 
   revalidatePath("/admin/orders");
   revalidatePath(`/admin/orders/${id}`);
+}
+
+/** Brand theme */
+
+export async function updateSiteTheme(_prevState: ActionResult | null, formData: FormData): Promise<ActionResult> {
+  await requireAdmin();
+
+  const paletteId = String(formData.get("paletteId") ?? "");
+  if (!THEME_PALETTES.some((p) => p.id === paletteId)) {
+    return { ok: false, error: "That palette doesn't exist." };
+  }
+
+  const db = createServiceRoleClient();
+  const { error } = await db
+    .from("site_settings")
+    .upsert({ key: "theme_palette_id", value: paletteId, updated_at: new Date().toISOString() });
+
+  if (error) return { ok: false, error: error.message };
+
+  // The accent color is read in the root layout, so every route (storefront
+  // and admin) needs to re-render with the new value.
+  revalidatePath("/", "layout");
+  return { ok: true };
 }
