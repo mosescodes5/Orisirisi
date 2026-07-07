@@ -36,6 +36,10 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "studio",
+    "src/lib/blog.ts",
+    "src/lib/sanity",
+    "src/components/layout/ThemeToggle.tsx"
   ]
 }
