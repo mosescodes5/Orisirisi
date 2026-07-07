@@ -17,6 +17,7 @@ export default async function AdminLoginPage({
           <span className="font-display text-2xl font-semibold">
             Orísirísi<span className="text-orisirisi">.</span>
           </span>
+          <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-ink/40">with Taiwo</p>
           <p className="mt-2 text-[13px] text-ink/60">Sign in to manage products and orders.</p>
         </div>
         <AdminLoginForm next={params.next ?? "/admin"} notAuthorized={params.error === "not-authorized"} />

@@ -66,8 +66,13 @@ export function Header() {
       >
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between border-b border-ink/[0.08] p-6">
-            <span className="font-display text-xl font-semibold">
-              Orísirísi<span className="text-orisirisi">.</span>
+            <span className="flex flex-col leading-none">
+              <span className="font-display text-xl font-semibold">
+                Orísirísi<span className="text-orisirisi">.</span>
+              </span>
+              <span className="mt-1 text-[8.5px] font-semibold uppercase tracking-[0.24em] text-mist">
+                with Taiwo
+              </span>
             </span>
             <button
               onClick={() => setMobileMenuOpen(false)}
@@ -119,7 +124,7 @@ export function Header() {
                 <span className="font-display text-[22px] font-semibold tracking-tight sm:text-[26px]">
                   Orísirísi<span className="text-orisirisi">.</span>
                 </span>
-                <span className="mt-1 hidden text-[9px] font-semibold uppercase tracking-[0.24em] text-mist sm:block">
+                <span className="mt-1 text-[8px] font-semibold uppercase tracking-[0.22em] text-mist sm:text-[9px] sm:tracking-[0.24em]">
                   with Taiwo
                 </span>
               </Link>

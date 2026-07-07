@@ -18,9 +18,12 @@ export function AdminSidebar({ profile }: { profile: AdminProfile }) {
 
   return (
     <aside className="flex h-full w-[248px] shrink-0 flex-col border-r border-white/[0.08] bg-ink text-paper">
-      <div className="flex items-center gap-2 border-b border-white/[0.08] px-6 py-6">
-        <span className="font-display text-xl font-semibold">
-          Orísirísi<span className="text-orisirisi">.</span>
+      <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-6">
+        <span className="flex flex-col leading-none">
+          <span className="font-display text-xl font-semibold">
+            Orísirísi<span className="text-orisirisi">.</span>
+          </span>
+          <span className="mt-1 text-[8px] font-semibold uppercase tracking-[0.2em] text-white/40">with Taiwo</span>
         </span>
         <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white/70">
           Admin

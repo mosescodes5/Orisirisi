@@ -82,3 +82,23 @@ export async function getAllProductSlugs(): Promise<string[]> {
     return [];
   }
 }
+
+/**
+ * Looks up a specific set of products by id, in one round trip. Used by
+ * order verification (client-side and the Paystack webhook) to re-price
+ * a cart from the database rather than trusting whatever the client sent.
+ */
+export async function getProductsByIds(ids: string[]): Promise<Product[]> {
+  if (ids.length === 0) return [];
+
+  try {
+    const supabase = createAnonClient();
+    const { data, error } = await supabase.from("products").select("*").in("id", ids);
+
+    if (error) throw new Error(error.message);
+    return (data ?? []).map(mapDbProduct);
+  } catch (err) {
+    console.error("[products] getProductsByIds failed:", err);
+    return [];
+  }
+}

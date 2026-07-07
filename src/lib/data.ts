@@ -1,4 +1,4 @@
-import type { CategoryDef, BlogPost } from "./types";
+import type { CategoryDef, BlogPost, Product } from "./types";
 
 /*
   Static/reference data layer: categories, placeholder images, and blog
@@ -77,6 +77,13 @@ export function placeholderImage(seed: string, w = 600, h = 750) {
     return `https://images.unsplash.com/photo-${curated}?auto=format&fit=crop&w=${w}&h=${h}&q=80`;
   }
   return `https://picsum.photos/seed/${seed}/${w}/${h}`;
+}
+
+// Same resolution logic as placeholderImage, but takes the product itself —
+// used wherever a Product object (rather than a bare seed string) is on
+// hand, e.g. building the order confirmation email after a webhook fires.
+export function productImage(product: Pick<Product, "image">, w = 600, h = 750) {
+  return placeholderImage(product.image, w, h);
 }
 
 /* ------------------------------------------------------------------ */

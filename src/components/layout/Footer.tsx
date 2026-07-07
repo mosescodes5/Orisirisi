@@ -33,6 +33,7 @@ export function Footer() {
             <div className="font-display text-2xl font-semibold">
               Orísirísi<span className="text-orisirisi">.</span>
             </div>
+            <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-mist">with Taiwo</p>
             <p className="mt-3.5 max-w-[260px] text-[13px] leading-relaxed text-ink/60">
               A curated assortment of jewelry, wristwatches, household items and fresh juice — with Taiwo.
             </p>
