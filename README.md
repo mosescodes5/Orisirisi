@@ -147,18 +147,18 @@ signup) goes through the single `sendEmail()` function in `src/lib/email.ts`
 — every API route reads through it, so it's the only file that needs to
 change if the provider changes again.
 
-It sends via **Resend** first, and automatically falls back to **Gmail
-SMTP** if Resend isn't configured or a send fails — so you can run one or
+It sends via **Brevo** first, and automatically falls back to **Gmail
+SMTP** if Brevo isn't configured or a send fails — so you can run one or
 both.
 
-1. **Resend**: create an API key at
-   [resend.com/api-keys](https://resend.com/api-keys), then verify your
-   sending domain under Domains → Add Domain (until it's verified, Resend
-   will only deliver to the email address on your own Resend account — fine
-   for testing, not for real customers). Add to `.env.local`:
+1. **Brevo**: create an account at [brevo.com](https://www.brevo.com), then
+   go to Settings → SMTP & API → API Keys and create a transactional API
+   key. Then go to Settings → Senders & IP and verify a sender email — a
+   Gmail address you already own works fine, no business domain required.
+   Add to `.env.local`:
    ```
-   RESEND_API_KEY=
-   RESEND_FROM_EMAIL="Orísirísi with Taiwo <hello@orisirisiwithtaiwo.com>"
+   BREVO_API_KEY=
+   BREVO_FROM_EMAIL="Orísirísi with Taiwo <yourname@gmail.com>"
    ```
 2. **Gmail SMTP (fallback)**: turn on 2-Step Verification on the Google
    account, then create an App Password at

@@ -1,20 +1,23 @@
 import nodemailer from "nodemailer";
 
 /*
-  Transactional email — sent via Resend, with Gmail SMTP (nodemailer) as an
-  automatic fallback if Resend isn't configured or a send fails.
+  Transactional email — sent via Brevo (formerly Sendinblue), with Gmail
+  SMTP (nodemailer) as an automatic fallback if Brevo isn't configured or a
+  send fails.
 
   Required env vars (set in .env.local for dev, and in Vercel → Project →
   Settings → Environment Variables for production):
 
-    RESEND_API_KEY     from resend.com/api-keys
-    RESEND_FROM_EMAIL  a sender address on a domain verified in Resend,
-                        e.g. "Orísirísi with Taiwo <hello@orisirisiwithtaiwo.com>"
-                        (falls back to SMTP_USER, then onboarding@resend.dev)
+    BREVO_API_KEY      from app.brevo.com → Settings → SMTP & API → API Keys
+                        (create a "transactional" API key, not an SMTP key)
+    BREVO_FROM_EMAIL   the sender address — must be a "Sender" you've
+                        verified in Brevo (Settings → Senders & IP),
+                        e.g. "Orísirísi with Taiwo <hello@yourgmail.com>"
+                        (falls back to SMTP_USER if not set)
 
     SMTP_HOST      smtp.gmail.com
     SMTP_PORT      465
-    SMTP_USER      the Gmail address sending mail, e.g. hello@orisirisiwithtaiwo.com
+    SMTP_USER      the Gmail address sending mail, e.g. hello@gmail.com
     SMTP_PASSWORD  a Gmail App Password — NOT the regular account password.
                    Gmail requires 2-Step Verification turned on first, then
                    create one at myaccount.google.com/apppasswords.
@@ -27,7 +30,7 @@ import nodemailer from "nodemailer";
   ever come from env vars.
 */
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
 
 const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
 const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
@@ -38,10 +41,18 @@ const STORE_NAME = process.env.STORE_NAME || "Orísirísi with Taiwo";
 const STORE_URL = process.env.STORE_URL || "https://orisirisiwithtaiwo.com";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || SMTP_USER;
 
-const RESEND_FROM_EMAIL =
-  process.env.RESEND_FROM_EMAIL || (SMTP_USER ? `"${STORE_NAME}" <${SMTP_USER}>` : `"${STORE_NAME}" <onboarding@resend.dev>`);
+const BREVO_FROM_EMAIL = process.env.BREVO_FROM_EMAIL || (SMTP_USER ? `"${STORE_NAME}" <${SMTP_USER}>` : "");
+const BREVO_FROM_NAME = STORE_NAME;
+// Brevo wants the sender name and email as separate fields, but we also
+// accept the same "Name <email>" format used elsewhere in this file.
+function parseFromAddress(raw: string): { name: string; email: string } {
+  const match = raw.match(/^"?([^"<]*)"?\s*<(.+)>$/);
+  if (match) return { name: match[1].trim() || BREVO_FROM_NAME, email: match[2].trim() };
+  return { name: BREVO_FROM_NAME, email: raw.trim() };
+}
 
 let cachedTransporter: nodemailer.Transporter | null = null;
+
 
 function getTransporter() {
   if (!SMTP_USER || !SMTP_PASSWORD) {
@@ -69,27 +80,31 @@ export type SendEmailInput = {
   replyTo?: string;
 };
 
-async function sendViaResend({ to, subject, html, from, replyTo }: SendEmailInput) {
-  const res = await fetch("https://api.resend.com/emails", {
+async function sendViaBrevo({ to, subject, html, from, replyTo }: SendEmailInput) {
+  const { name, email } = parseFromAddress(from || BREVO_FROM_EMAIL);
+  if (!email) throw new Error("Brevo sender email is not configured — set BREVO_FROM_EMAIL or SMTP_USER.");
+
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${RESEND_API_KEY}`,
+      "api-key": BREVO_API_KEY as string,
       "Content-Type": "application/json",
+      Accept: "application/json",
     },
     body: JSON.stringify({
-      from: from || RESEND_FROM_EMAIL,
-      to,
+      sender: { name, email },
+      to: [{ email: to }],
       subject,
-      html,
-      reply_to: replyTo,
+      htmlContent: html,
+      ...(replyTo ? { replyTo: { email: replyTo } } : {}),
     }),
   });
 
   const data = await res.json().catch(() => null);
   if (!res.ok) {
-    throw new Error(data?.message || `Resend API error (${res.status})`);
+    throw new Error(data?.message || `Brevo API error (${res.status})`);
   }
-  return { success: true as const, messageId: data?.id as string | undefined };
+  return { success: true as const, messageId: data?.messageId as string | undefined };
 }
 
 async function sendViaGmail({ to, subject, html, from, replyTo }: SendEmailInput) {
@@ -109,15 +124,15 @@ async function sendViaGmail({ to, subject, html, from, replyTo }: SendEmailInput
 }
 
 export async function sendEmail(input: SendEmailInput) {
-  const canUseResend = Boolean(RESEND_API_KEY);
+  const canUseBrevo = Boolean(BREVO_API_KEY);
   const canUseGmail = Boolean(SMTP_USER && SMTP_PASSWORD);
 
-  if (canUseResend) {
+  if (canUseBrevo) {
     try {
-      return await sendViaResend(input);
+      return await sendViaBrevo(input);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Unknown Resend error";
-      console.error("sendEmail: Resend failed" + (canUseGmail ? ", falling back to Gmail SMTP" : "") + ":", message);
+      const message = error instanceof Error ? error.message : "Unknown Brevo error";
+      console.error("sendEmail: Brevo failed" + (canUseGmail ? ", falling back to Gmail SMTP" : "") + ":", message);
       if (!canUseGmail) return { success: false as const, error: message };
       // fall through to Gmail SMTP below
     }
@@ -133,13 +148,13 @@ export async function sendEmail(input: SendEmailInput) {
     }
   }
 
-  const message = "Email is not configured — set RESEND_API_KEY and/or SMTP_USER/SMTP_PASSWORD.";
+  const message = "Email is not configured — set BREVO_API_KEY and/or SMTP_USER/SMTP_PASSWORD.";
   console.error("sendEmail:", message);
   return { success: false as const, error: message };
 }
 
 export function isEmailConfigured() {
-  return Boolean(RESEND_API_KEY) || Boolean(SMTP_USER && SMTP_PASSWORD);
+  return Boolean(BREVO_API_KEY) || Boolean(SMTP_USER && SMTP_PASSWORD);
 }
 
 export { ADMIN_EMAIL, STORE_NAME, STORE_URL };
