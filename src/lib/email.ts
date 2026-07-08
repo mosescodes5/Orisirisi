@@ -289,4 +289,25 @@ export const emailTemplates = {
       `,
       `New contact message from ${params.name}`
     ),
+
+  /** Sent right after sign-up, with a Supabase-generated confirmation link (see customer/actions.ts). */
+  verifyEmail: (params: { name: string; link: string }) =>
+    brandWrapper(
+      `
+      <h1 style="margin:0 0 8px;font-size:22px;font-weight:600;">Confirm your email</h1>
+      <p style="margin:0 0 20px;font-size:14px;color:#555;">
+        Hi ${params.name || "there"}, thanks for creating an account with ${STORE_NAME}. Click below to confirm
+        your email address and finish setting up your account.
+      </p>
+      ${button("Confirm email address", params.link)}
+      <p style="margin:24px 0 0;font-size:12px;color:#999;line-height:1.6;">
+        This link expires soon. If the button doesn't work, copy and paste this URL into your browser:<br />
+        <span style="word-break:break-all;color:#ef430b;">${params.link}</span>
+      </p>
+      <p style="margin:16px 0 0;font-size:12px;color:#999;">
+        Didn't create this account? You can safely ignore this email.
+      </p>
+      `,
+      "Confirm your email to finish creating your account."
+    ),
 };
