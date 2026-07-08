@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useActionState } from "react";
-import { UserPlus, LogIn, Mail, AlertCircle } from "lucide-react";
+import { UserPlus, LogIn, Mail, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { signInCustomer, signUpCustomer } from "@/lib/customer/actions";
 
 export function AccountGate() {
   const [tab, setTab] = useState<"signin" | "signup">("signin");
   const [signUpState, signUpAction, signUpPending] = useActionState(signUpCustomer, null);
   const [signInState, signInAction, signInPending] = useActionState(signInCustomer, null);
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
 
   const state = tab === "signup" ? signUpState : signInState;
 
@@ -23,9 +24,27 @@ export function AccountGate() {
             We&apos;ve sent a confirmation link to your email address. Click it to activate your account,
             then come back here to sign in.
           </p>
+          <button
+            type="button"
+            onClick={() => setTab("signin")}
+            className="mt-2 text-[12.5px] font-bold uppercase tracking-wide text-ink/50 underline-offset-4 hover:text-orisirisi hover:underline"
+          >
+            Used the wrong email? Go back
+          </button>
         </div>
       </div>
     );
+  }
+
+  function handleSignUp(formData: FormData) {
+    const password = String(formData.get("password") ?? "");
+    const confirmPassword = String(formData.get("confirmPassword") ?? "");
+    if (password !== confirmPassword) {
+      setPasswordMismatch(true);
+      return;
+    }
+    setPasswordMismatch(false);
+    signUpAction(formData);
   }
 
   return (
@@ -51,21 +70,23 @@ export function AccountGate() {
         </button>
       </div>
 
-      {state && !state.ok && (
-        <div className="mt-6 flex items-start gap-2 rounded-xl bg-red-50 px-4 py-3 text-[13px] text-red-700">
+      {((state && !state.ok) || (tab === "signup" && passwordMismatch)) && (
+        <div role="alert" className="mt-6 flex items-start gap-2 rounded-xl bg-red-50 px-4 py-3 text-[13px] text-red-700">
           <AlertCircle size={15} className="mt-0.5 shrink-0" />
-          <span>{state.error}</span>
+          <span>{passwordMismatch ? "Passwords don't match." : state && !state.ok ? state.error : null}</span>
         </div>
       )}
 
       {tab === "signup" ? (
-        <form key="signup" action={signUpAction} className="mt-8 flex flex-col gap-4">
+        <form key="signup" action={handleSignUp} className="mt-8 flex flex-col gap-4">
           <label className="flex flex-col gap-2">
             <span className="text-xs font-bold uppercase tracking-wide text-ink/60">Full name</span>
             <input
               name="fullName"
               type="text"
               required
+              autoComplete="name"
+              autoFocus
               placeholder="Your full name"
               className="h-12 rounded-[10px] border-[1.5px] border-ink/[0.14] bg-transparent px-4 text-[14px] transition-colors focus:border-orisirisi focus:outline-none"
             />
@@ -76,21 +97,25 @@ export function AccountGate() {
               name="email"
               type="email"
               required
+              autoComplete="email"
               placeholder="you@example.com"
               className="h-12 rounded-[10px] border-[1.5px] border-ink/[0.14] bg-transparent px-4 text-[14px] transition-colors focus:border-orisirisi focus:outline-none"
             />
           </label>
-          <label className="flex flex-col gap-2">
-            <span className="text-xs font-bold uppercase tracking-wide text-ink/60">Password</span>
-            <input
-              name="password"
-              type="password"
-              required
-              minLength={8}
-              placeholder="At least 8 characters"
-              className="h-12 rounded-[10px] border-[1.5px] border-ink/[0.14] bg-transparent px-4 text-[14px] transition-colors focus:border-orisirisi focus:outline-none"
-            />
-          </label>
+          <PasswordField
+            label="Password"
+            name="password"
+            autoComplete="new-password"
+            minLength={8}
+            placeholder="At least 8 characters"
+          />
+          <PasswordField
+            label="Confirm password"
+            name="confirmPassword"
+            autoComplete="new-password"
+            minLength={8}
+            placeholder="Type it again"
+          />
 
           <button
             type="submit"
@@ -109,20 +134,13 @@ export function AccountGate() {
               name="email"
               type="email"
               required
+              autoComplete="email"
+              autoFocus
               placeholder="you@example.com"
               className="h-12 rounded-[10px] border-[1.5px] border-ink/[0.14] bg-transparent px-4 text-[14px] transition-colors focus:border-orisirisi focus:outline-none"
             />
           </label>
-          <label className="flex flex-col gap-2">
-            <span className="text-xs font-bold uppercase tracking-wide text-ink/60">Password</span>
-            <input
-              name="password"
-              type="password"
-              required
-              placeholder="Your password"
-              className="h-12 rounded-[10px] border-[1.5px] border-ink/[0.14] bg-transparent px-4 text-[14px] transition-colors focus:border-orisirisi focus:outline-none"
-            />
-          </label>
+          <PasswordField label="Password" name="password" autoComplete="current-password" placeholder="Your password" />
 
           <button
             type="submit"
@@ -135,5 +153,47 @@ export function AccountGate() {
         </form>
       )}
     </div>
+  );
+}
+
+function PasswordField({
+  label,
+  name,
+  autoComplete,
+  minLength,
+  placeholder,
+}: {
+  label: string;
+  name: string;
+  autoComplete: string;
+  minLength?: number;
+  placeholder: string;
+}) {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <label className="flex flex-col gap-2">
+      <span className="text-xs font-bold uppercase tracking-wide text-ink/60">{label}</span>
+      <span className="relative flex items-center">
+        <input
+          name={name}
+          type={visible ? "text" : "password"}
+          required
+          autoComplete={autoComplete}
+          minLength={minLength}
+          placeholder={placeholder}
+          className="h-12 w-full rounded-[10px] border-[1.5px] border-ink/[0.14] bg-transparent px-4 pr-11 text-[14px] transition-colors focus:border-orisirisi focus:outline-none"
+        />
+        <button
+          type="button"
+          onClick={() => setVisible((v) => !v)}
+          tabIndex={-1}
+          aria-label={visible ? "Hide password" : "Show password"}
+          className="absolute right-3 flex h-7 w-7 items-center justify-center text-ink/40 transition-colors hover:text-ink"
+        >
+          {visible ? <EyeOff size={16} /> : <Eye size={16} />}
+        </button>
+      </span>
+    </label>
   );
 }

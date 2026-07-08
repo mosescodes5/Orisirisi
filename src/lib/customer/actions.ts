@@ -29,6 +29,15 @@ export async function signUpCustomer(
 
   if (error) return { ok: false, error: error.message };
 
+  // Supabase deliberately does NOT return an error here if the email
+  // already belongs to a confirmed account — it returns a fake "success"
+  // with an empty `identities` array, so an attacker can't use signup to
+  // probe which emails are registered. We still need to tell the customer
+  // what actually happened, so detect that case and surface it honestly.
+  if (data.user && data.user.identities && data.user.identities.length === 0) {
+    return { ok: false, error: "An account with this email already exists. Try signing in instead." };
+  }
+
   // Give the profile row (created by the DB trigger) the customer's name.
   if (data.user) {
     await supabase.from("profiles").update({ full_name: fullName }).eq("id", data.user.id);
