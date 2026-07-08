@@ -70,12 +70,20 @@ export function AccountGate() {
         </button>
       </div>
 
-      {((state && !state.ok) || (tab === "signup" && passwordMismatch)) && (
-        <div role="alert" className="mt-6 flex items-start gap-2 rounded-xl bg-red-50 px-4 py-3 text-[13px] text-red-700">
-          <AlertCircle size={15} className="mt-0.5 shrink-0" />
-          <span>{passwordMismatch ? "Passwords don't match." : state && !state.ok ? state.error : null}</span>
-        </div>
-      )}
+      {(() => {
+        const errorMessage = passwordMismatch
+          ? "Passwords don't match."
+          : state && !state.ok
+            ? state.error
+            : null;
+        if (!errorMessage) return null;
+        return (
+          <div role="alert" className="mt-6 flex items-start gap-2 rounded-xl bg-red-50 px-4 py-3 text-[13px] text-red-700">
+            <AlertCircle size={15} className="mt-0.5 shrink-0" />
+            <span>{errorMessage}</span>
+          </div>
+        );
+      })()}
 
       {tab === "signup" ? (
         <form key="signup" action={handleSignUp} className="mt-8 flex flex-col gap-4">
