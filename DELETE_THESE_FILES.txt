@@ -1,0 +1,8 @@
+These files are no longer used and should be deleted from your repo
+(replaced by the new Supabase-backed admin blog):
+
+  src/lib/blog.ts
+  src/lib/sanity/client.ts
+  src/lib/sanity/image.ts
+
+(the whole src/lib/sanity/ folder can go)

@@ -1,5 +1,31 @@
 export type AdminRole = "customer" | "staff" | "admin";
 
+export type BlogContentBlock =
+  | { type: "paragraph"; text: string }
+  | { type: "heading"; text: string }
+  | { type: "quote"; text: string };
+
+export type AdminBlogPost = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  cover_image: string;
+  author_name: string;
+  author_role: string;
+  author_avatar: string;
+  author_bio: string;
+  content: BlogContentBlock[];
+  tags: string[];
+  reading_time: number;
+  featured: boolean;
+  is_published: boolean;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type AdminProfile = {
   id: string;
   email: string;

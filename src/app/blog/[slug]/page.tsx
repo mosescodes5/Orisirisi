@@ -3,19 +3,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Clock, ArrowRight, ChevronLeft } from "lucide-react";
-import { getBlogPosts, getBlogPostBySlug, getRelatedPosts, placeholderImage } from "@/lib/data";
+import { getBlogPosts, getBlogPostBySlug, getRelatedPosts } from "@/lib/blog-data";
+import { placeholderImage } from "@/lib/data";
 import { formatBlogDate } from "@/lib/format";
 import { AuthorCard } from "@/components/blog/AuthorCard";
 import { ShareButtons } from "@/components/blog/ShareButtons";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { Reveal } from "@/components/layout/Reveal";
 
-export function generateStaticParams() {
-  return getBlogPosts().map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const posts = await getBlogPosts();
+  return posts.map((p) => ({ slug: p.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const post = getBlogPostBySlug(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getBlogPostBySlug(slug);
   if (!post) return {};
   return {
     title: post.title,
@@ -30,11 +33,12 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = getBlogPostBySlug(params.slug);
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = await getBlogPostBySlug(slug);
   if (!post) return notFound();
 
-  const related = getRelatedPosts(post);
+  const related = await getRelatedPosts(post);
   const url = `https://www.orisirisi.com/blog/${post.slug}`;
 
   return (

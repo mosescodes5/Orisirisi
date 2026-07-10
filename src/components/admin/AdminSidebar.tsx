@@ -7,6 +7,7 @@ import {
   Package,
   ShoppingCart,
   Palette,
+  Newspaper,
   LogOut,
   ExternalLink,
   ChevronsLeft,
@@ -20,6 +21,7 @@ const NAV = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
   { label: "Products", href: "/admin/products", icon: Package },
   { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
+  { label: "Blog", href: "/admin/blog", icon: Newspaper },
   { label: "Brand Theme", href: "/admin/settings/theme", icon: Palette },
 ];
 

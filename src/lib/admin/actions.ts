@@ -100,6 +100,86 @@ function productPayloadFromForm(formData: FormData) {
   };
 }
 
+/** Blog */
+
+export async function createBlogPost(_prevState: ActionResult | null, formData: FormData): Promise<ActionResult> {
+  await requireAdmin();
+  const db = createServiceRoleClient();
+
+  const payload = blogPostPayloadFromForm(formData);
+  const { error } = await db.from("blog_posts").insert(payload);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/admin/blog");
+  revalidatePath("/blog");
+  redirect("/admin/blog");
+}
+
+export async function updateBlogPost(
+  id: string,
+  _prevState: ActionResult | null,
+  formData: FormData
+): Promise<ActionResult> {
+  await requireAdmin();
+  const db = createServiceRoleClient();
+
+  const payload = blogPostPayloadFromForm(formData);
+  const { error } = await db.from("blog_posts").update(payload).eq("id", id);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/admin/blog");
+  revalidatePath(`/admin/blog/${id}`);
+  revalidatePath("/blog");
+  redirect("/admin/blog");
+}
+
+export async function deleteBlogPost(id: string) {
+  await requireAdmin();
+  const db = createServiceRoleClient();
+  await db.from("blog_posts").delete().eq("id", id);
+  revalidatePath("/admin/blog");
+  revalidatePath("/blog");
+  redirect("/admin/blog");
+}
+
+function blogPostPayloadFromForm(formData: FormData) {
+  const isPublished = formData.get("is_published") === "on";
+  const wasAlreadyPublished = formData.get("was_published") === "on";
+
+  const content = JSON.parse(String(formData.get("content") ?? "[]"));
+  const wordCount = content.reduce(
+    (sum: number, block: { text?: string }) => sum + (block.text?.split(/\s+/).filter(Boolean).length ?? 0),
+    0
+  );
+
+  return {
+    title: String(formData.get("title") ?? ""),
+    slug: String(formData.get("slug") ?? "")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, ""),
+    excerpt: String(formData.get("excerpt") ?? ""),
+    category: String(formData.get("category") ?? ""),
+    cover_image: String(formData.get("cover_image") ?? ""),
+    author_name: String(formData.get("author_name") ?? "Taiwo"),
+    author_role: String(formData.get("author_role") ?? "Founder, Orísirísi"),
+    author_avatar: String(formData.get("author_avatar") ?? ""),
+    author_bio: String(formData.get("author_bio") ?? ""),
+    content,
+    tags: String(formData.get("tags") ?? "")
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean),
+    reading_time: Math.max(1, Math.round(wordCount / 200)),
+    featured: formData.get("featured") === "on",
+    is_published: isPublished,
+    // Set published_at the first time a post goes live; keep the original
+    // date on subsequent edits so it doesn't jump to "today" every save.
+    ...(isPublished && !wasAlreadyPublished ? { published_at: new Date().toISOString() } : {}),
+  };
+}
+
 /** Orders */
 
 export async function updateOrderStatus(id: string, status: OrderStatus) {

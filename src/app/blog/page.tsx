@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getBlogPosts, getFeaturedPost, blogCategories } from "@/lib/data";
+import { getBlogPosts, getFeaturedPost, getBlogCategories } from "@/lib/blog-data";
 import { FeaturedPost } from "@/components/blog/FeaturedPost";
 import { BlogIndex } from "@/components/blog/BlogIndex";
 import { Reveal } from "@/components/layout/Reveal";
@@ -9,10 +9,9 @@ export const metadata: Metadata = {
   description: "Notes from Taiwo on sourcing, styling, care and life in Lagos — the stories behind the Orísirísi assortment.",
 };
 
-export default function BlogPage() {
-  const posts = getBlogPosts();
-  const featured = getFeaturedPost();
-  const rest = posts.filter((p) => p.slug !== featured.slug);
+export default async function BlogPage() {
+  const [posts, featured, categories] = await Promise.all([getBlogPosts(), getFeaturedPost(), getBlogCategories()]);
+  const rest = featured ? posts.filter((p) => p.slug !== featured.slug) : posts;
 
   return (
     <div className="px-5 py-14 sm:px-8 sm:py-16">
@@ -25,15 +24,25 @@ export default function BlogPage() {
           </p>
         </Reveal>
 
-        <div className="mt-10">
-          <Reveal>
-            <FeaturedPost post={featured} />
-          </Reveal>
-        </div>
+        {featured && (
+          <div className="mt-10">
+            <Reveal>
+              <FeaturedPost post={featured} />
+            </Reveal>
+          </div>
+        )}
 
-        <div className="mt-16">
-          <BlogIndex posts={rest} categories={blogCategories} />
-        </div>
+        {rest.length > 0 ? (
+          <div className="mt-16">
+            <BlogIndex posts={rest} categories={categories} />
+          </div>
+        ) : (
+          !featured && (
+            <p className="mt-16 text-center text-[14px] text-ink/50">
+              No posts yet — check back soon.
+            </p>
+          )
+        )}
       </div>
     </div>
   );

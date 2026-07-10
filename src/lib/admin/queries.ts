@@ -1,6 +1,6 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
-import type { AdminOrder, AdminOrderWithItems, AdminProduct, AdminProfile } from "./types";
+import type { AdminBlogPost, AdminOrder, AdminOrderWithItems, AdminProduct, AdminProfile } from "./types";
 import { sanitizeThemeColors, type ThemeColors } from "@/lib/theme-palettes";
 
 /** The signed-in admin/staff user's profile, or null if not signed in / not staff. */
@@ -61,6 +61,19 @@ export async function getProduct(id: string): Promise<AdminProduct | null> {
   const supabase = await createClient();
   const { data } = await supabase.from("products").select("*").eq("id", id).single();
   return (data as AdminProduct) ?? null;
+}
+
+export async function listBlogPosts(): Promise<AdminBlogPost[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("blog_posts").select("*").order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as AdminBlogPost[];
+}
+
+export async function getBlogPostAdmin(id: string): Promise<AdminBlogPost | null> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("blog_posts").select("*").eq("id", id).single();
+  return (data as AdminBlogPost) ?? null;
 }
 
 export async function listOrders(opts?: { status?: string }): Promise<AdminOrder[]> {
