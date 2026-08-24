@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     template: "%s — Orísirísi with Taiwo",
   },
   description:
-    "Orísirísi with Taiwo — a curated assortment of jewelry, wristwatches, household items and fresh juice, hand-checked before it ships. Nationwide delivery in Nigeria.",
+    "Orísirísi with Taiwo — one store, endless possibilities. A curated assortment of jewelry, wristwatches, household items and fresh juice, handpicked by Taiwo. Nationwide delivery in Nigeria.",
   keywords: [
     "Orisirisi",
     "Taiwo",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Orísirísi with Taiwo",
-    description: "Every sort of thing, curated. Jewelry, wristwatch, household items & fresh juice.",
+    description: "One store. Endless possibilities. Handpicked by Taiwo — jewelry, wristwatch, household items & fresh juice.",
     url: "https://www.orisirisi.com",
     siteName: "Orísirísi with Taiwo",
     type: "website",

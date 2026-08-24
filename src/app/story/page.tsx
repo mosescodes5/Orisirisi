@@ -67,7 +67,7 @@ export default function StoryPage() {
         <div className="mx-auto grid max-w-[1320px] grid-cols-1 items-center gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
           <Reveal className="relative aspect-[4/5] overflow-hidden rounded-[20px]">
             <Image
-              src={placeholderImage("orisirisi-taiwo", 700, 900)}
+              src="/images/taiwo-portrait.jpg"
               alt="Taiwo, founder of Orísirísi"
               fill
               className="object-cover grayscale-[20%] contrast-[1.05]"
