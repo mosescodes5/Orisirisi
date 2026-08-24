@@ -58,7 +58,7 @@ function validateAll(form: ShippingDetails): Partial<Record<FieldName, string>> 
 
 export function CheckoutForm({ onSubmittingChange }: { onSubmittingChange?: (submitting: boolean) => void }) {
   const router = useRouter();
-  const { items, subtotal, deliveryFee, total, clearCart } = useCart();
+  const { items, total, clearCart } = useCart();
   const [form, setForm] = useState<ShippingDetails>(emptyForm);
   const [touched, setTouched] = useState<Partial<Record<FieldName, boolean>>>({});
   const [scriptReady, setScriptReady] = useState(false);
@@ -107,6 +107,8 @@ export function CheckoutForm({ onSubmittingChange }: { onSubmittingChange?: (sub
     setSubmitting(true);
     const reference = `ORS-${Date.now()}`;
 
+    const orderItems = items.map((i) => ({ productId: i.productId, qty: i.qty, size: i.size ?? null }));
+
     const handler = window.PaystackPop.setup({
       key: publicKey,
       email: form.email,
@@ -114,32 +116,47 @@ export function CheckoutForm({ onSubmittingChange }: { onSubmittingChange?: (sub
       currency: "NGN",
       ref: reference,
       metadata: {
+        // The webhook and the callback below both read this back from
+        // Paystack's own record of the transaction — not from anything the
+        // browser reports after the fact — so it has to travel with the
+        // charge itself, not just live in local component state.
+        shipping: form,
+        items: orderItems,
         custom_fields: [
           { display_name: "Full Name", variable_name: "full_name", value: form.fullName },
           { display_name: "Phone", variable_name: "phone", value: form.phone },
         ],
       },
       callback: () => {
-        const order: CompletedOrder = {
-          reference,
-          items,
-          subtotal,
-          deliveryFee,
-          total,
-          shipping: form,
-          placedAt: new Date().toISOString(),
-        };
-        window.sessionStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(order));
-
-        // Fire-and-forget — never block the redirect on email delivery.
-        fetch("/api/send-order-confirmation", {
+        // The Paystack popup firing this callback only means the *browser*
+        // saw a success message — it is not proof the charge is real. The
+        // only source of truth is asking Paystack directly, server-to-server,
+        // which is what /api/verify-payment does (and also persists the
+        // order and sends the confirmation email once it's satisfied).
+        setError(null);
+        fetch("/api/verify-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(order),
-        }).catch((err) => console.error("Order confirmation email failed:", err));
-
-        clearCart();
-        router.push(`/checkout/success?ref=${reference}`);
+          body: JSON.stringify({ reference, shipping: form, items: orderItems }),
+        })
+          .then(async (res) => {
+            const data = await res.json().catch(() => null);
+            if (!res.ok || !data?.success) {
+              throw new Error(data?.error ?? "We couldn't confirm your payment. Please contact support.");
+            }
+            const order: CompletedOrder = data.order;
+            window.sessionStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(order));
+            clearCart();
+            router.push(`/checkout/success?ref=${reference}`);
+          })
+          .catch((err) => {
+            setSubmitting(false);
+            setError(
+              err instanceof Error
+                ? `${err.message} (Reference: ${reference} — save this in case you need to follow up.)`
+                : `We couldn't confirm your payment. Please contact support with reference ${reference}.`
+            );
+          });
       },
       onClose: () => {
         setSubmitting(false);
