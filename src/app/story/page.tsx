@@ -14,31 +14,47 @@ export const metadata: Metadata = {
 const VALUES = [
   {
     icon: <HandHeart size={22} strokeWidth={1.6} />,
-    title: "Hand-picked, not mass-sourced",
-    body: "Every piece is chosen the way Taiwo shops for herself — nothing goes on the shelf she wouldn't buy.",
+    title: "Handpicked by Taiwo",
+    body: "Every product is carefully selected with the same attention I'd give my own purchases. If I wouldn't use it, I won't sell it.",
   },
   {
     icon: <PackageCheck size={22} strokeWidth={1.6} />,
-    title: "Quality-checked before it ships",
-    body: "Stitching, clasps, glaze, weight in the hand — every item is inspected, not just photographed.",
+    title: "Quality you can trust",
+    body: "Every product is carefully inspected before it gets to you because your satisfaction matters more than making a quick sale.",
   },
   {
     icon: <Sparkles size={22} strokeWidth={1.6} />,
-    title: "A little bit of everything, on purpose",
-    body: "Household, jewelry, wristwatches and fresh juice — sorted by taste, not by category, the way a good shelf actually works.",
+    title: "Everything in One Place",
+    body: "Jewellery, wristwatches, household essentials and fresh juice—all thoughtfully selected so you can shop conveniently from one trusted store.",
   },
   {
     icon: <Users size={22} strokeWidth={1.6} />,
-    title: "Built for repeat customers",
-    body: "Slower restocks, fewer regrets. We'd rather bring a favorite back than flood the shop with new drops.",
+    title: "Customer first, and always.",
+    body: "We don't just want your first order—we want to become the store you confidently return to whenever you need quality products.",
   },
 ];
 
 const MILESTONES = [
-  { year: "2023", title: "The phone gallery", body: "A running album of things Taiwo kept buying for her own home — the seed of the assortment." },
-  { year: "2024", title: "First sorted shelf", body: "Household, jewelry and wristwatches organized into a proper catalogue, shared with friends first." },
-  { year: "2025", title: "Orísirísi opens", body: "The shop goes live to everyone, with nationwide delivery across Nigeria." },
-  { year: "2026", title: "The journal begins", body: "Sourcing notes, styling guides and Lagos life — the stories behind the shelf, written down." },
+  {
+    year: "2020",
+    title: "The first sale",
+    body: "Like many businesses, this one started small. During the COVID-19 lockdown, I began selling wristwatches. What started as a way to earn extra income became my first lesson in entrepreneurship—and my first proof that solving everyday needs creates opportunity.",
+  },
+  {
+    year: "2023",
+    title: "The value lesson",
+    body: "While serving in Abuja during NYSC, I wanted to support myself financially. One day, I made fresh fruit juice for my dad. When he finished it, he simply handed me money and asked me to make more. That moment changed how I saw business. I realized people don't just pay for products, they pay for value, convenience, and a great experience. That lesson has guided every business decision I've made since.",
+  },
+  {
+    year: "2025",
+    title: "Orisirisi is born",
+    body: "Relocating from Abuja gave me a fresh perspective. I noticed people buying household items, jewellery, and wristwatches from different vendors, paying multiple delivery fees and struggling to find trusted sellers. I believed shopping could be simpler. So I created Orisirisi with Taiwo—a carefully curated store where quality products live in one place, making shopping easier, faster, and more enjoyable.",
+  },
+  {
+    year: "Today",
+    title: "Still building",
+    body: "Orisirisi is more than a store. It's a reflection of what I believe business should be: creating value, earning trust, and making everyday life a little easier. Alongside the products I sell, I also share marketing insights and business lessons because I believe great businesses grow when they help people first.",
+  },
 ];
 
 export default function StoryPage() {
@@ -67,7 +83,7 @@ export default function StoryPage() {
         <div className="mx-auto grid max-w-[1320px] grid-cols-1 items-center gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
           <Reveal className="relative aspect-[4/5] overflow-hidden rounded-[20px]">
             <Image
-              src="/images/taiwo-portrait.jpg"
+              src="/images/taiwo-portrait.jpeg"
               alt="Taiwo, founder of Orísirísi"
               fill
               className="object-cover grayscale-[20%] contrast-[1.05]"
@@ -76,23 +92,22 @@ export default function StoryPage() {
           </Reveal>
 
           <Reveal delay={0.1}>
-            <p className="eyebrow">The Person Behind the Shelf</p>
+            <p className="eyebrow">Meet Taiwo</p>
             <h2 className="mt-3 font-display text-[28px] font-medium leading-[1.15] tracking-tight sm:text-[36px] lg:text-[40px]">
-              &ldquo;Orísirísi is what I&apos;d sell you if you sat in my living room.&rdquo;
+              &ldquo;Every piece tells your story.&rdquo;
             </h2>
             <p className="mt-5 max-w-[560px] text-[15.5px] leading-[1.8] text-ink/60">
-              It started as a phone gallery full of things I couldn&apos;t stop buying — a lamp here, a necklace
-              there, a watch too nice not to share. Friends kept asking where things came from, then asking
-              me to just buy one for them too. At some point that stopped being a favor and started being a
-              shop.
+              I believe shopping should be simple, enjoyable, and trustworthy. That&apos;s why I created
+              Orisirisi—a carefully curated marketplace where you can discover quality jewellery, stylish
+              wristwatches, household essentials, refreshing fruit juice, and more, all in one place.
             </p>
             <p className="mt-4 max-w-[560px] text-[15.5px] leading-[1.8] text-ink/60">
-              Orísirísi is that gallery, sorted and made shoppable: household pieces that make a house feel
-              lived-in, jewelry that doesn&apos;t need an occasion, a wristwatch worth the wrist space, fresh
-              juice made the way it should be. Every item on this shelf passed through my hands first. That&apos;s
-              the whole promise — not a slogan, just how I&apos;d want to be shopped from.
+              When I&apos;m not curating products, I&apos;m sharing marketing insights and business ideas to
+              help entrepreneurs grow. Whether you&apos;re here to shop or learn, I&apos;m glad you&apos;re here.
             </p>
-            <p className="mt-5 font-display text-[22px] italic text-orisirisi">— Taiwo</p>
+            <p className="mt-5 font-display text-[22px] italic text-orisirisi">
+              Welcome to Orisirisi Emporium. — Taiwo
+            </p>
           </Reveal>
         </div>
       </section>
@@ -102,7 +117,7 @@ export default function StoryPage() {
           <Reveal className="mx-auto max-w-lg text-center">
             <p className="eyebrow">What We Stand For</p>
             <h2 className="mt-2.5 font-display text-[28px] font-medium sm:text-[36px]">
-              A few things that don&apos;t change
+              Why People Keep Coming Back
             </h2>
           </Reveal>
 
@@ -113,8 +128,8 @@ export default function StoryPage() {
       <section className="px-5 py-20 sm:px-8 sm:py-24">
         <div className="mx-auto max-w-[860px]">
           <Reveal className="text-center">
-            <p className="eyebrow">How We Got Here</p>
-            <h2 className="mt-2.5 font-display text-[28px] font-medium sm:text-[36px]">The short version</h2>
+            <p className="eyebrow">Orisirisi Story</p>
+            <h2 className="mt-2.5 font-display text-[28px] font-medium sm:text-[36px]">How It All Started</h2>
           </Reveal>
 
           <div className="mt-14 flex flex-col gap-10">
@@ -137,15 +152,16 @@ export default function StoryPage() {
 
       <section className="relative overflow-hidden bg-secondary px-5 py-20 text-paper sm:px-8">
         <Reveal className="relative z-[1] mx-auto max-w-[560px] text-center">
-          <h2 className="font-display text-[28px] font-medium sm:text-[36px]">Come see the shelf.</h2>
+          <h2 className="font-display text-[28px] font-medium sm:text-[36px]">Personally Selected by Taiwo</h2>
           <p className="mt-3 text-[14.5px] text-paper/70">
-            Jewelry, wristwatch, household items and fresh juice — hand-picked, one piece at a time.
+            Every product in Orisirisi has been carefully chosen for its quality, usefulness, and value.
+            Because if I wouldn&apos;t buy it, I won&apos;t ask you to.
           </p>
           <Link
             href="/new-in"
             className="mt-8 inline-flex items-center gap-2.5 rounded-full bg-orisirisi px-8 py-4 text-[13px] font-bold uppercase tracking-wide text-paper transition-transform hover:scale-105"
           >
-            Shop the assortment <ArrowRight size={14} />
+            Explore Orisirisi <ArrowRight size={14} />
           </Link>
         </Reveal>
       </section>

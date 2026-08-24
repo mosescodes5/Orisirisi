@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Reveal } from "@/components/layout/Reveal";
-import { placeholderImage } from "@/lib/data";
 
 export function Story() {
   return (
@@ -22,7 +21,7 @@ export function Story() {
       <div className="relative mx-auto grid max-w-[1320px] grid-cols-1 items-center gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
         <Reveal className="relative aspect-[4/5] overflow-hidden rounded-[20px]">
           <Image
-            src="/images/taiwo-portrait.jpg"
+            src="/images/taiwo-portrait.jpeg"
             alt="Taiwo, founder of Orísirísi"
             fill
             className="object-cover grayscale-[20%] contrast-[1.05]"
@@ -31,21 +30,24 @@ export function Story() {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <p className="eyebrow">The Person Behind the Shelf</p>
+          <p className="eyebrow">Meet Taiwo</p>
           <h2 className="mt-3 font-display text-[28px] font-medium leading-[1.15] tracking-tight sm:text-[36px] lg:text-[40px]">
-            &ldquo;Orísirísi is what I&apos;d sell you if you sat in my living room.&rdquo;
+            &ldquo;Every piece tells your story.&rdquo;
           </h2>
           <p className="mt-5 max-w-[520px] text-[15.5px] leading-[1.8] text-ink/60">
-            It started as a phone gallery full of things I couldn&apos;t stop buying — a lamp
-            here, a necklace there, a watch too nice not to share. Orísirísi is that gallery,
-            sorted and made shoppable: household pieces that make a house feel lived-in, jewelry
-            that doesn&apos;t need an occasion, a wristwatch worth the wrist space, fresh juice
-            made the way it should be.
+            I believe shopping should be simple, enjoyable, and trustworthy. That&apos;s why I
+            created Orisirisi—a carefully curated marketplace where you can discover quality
+            jewellery, stylish wristwatches, household essentials, refreshing fruit juice, and
+            more, all in one place.
           </p>
           <p className="mt-4 max-w-[520px] text-[15.5px] leading-[1.8] text-ink/60">
-            Every item on this shelf passed through my hands first. That&apos;s the whole promise.
+            When I&apos;m not curating products, I&apos;m sharing marketing insights and business
+            ideas to help entrepreneurs grow. Whether you&apos;re here to shop or learn, I&apos;m
+            glad you&apos;re here.
           </p>
-          <p className="mt-5 font-display text-[22px] italic text-orisirisi">— Taiwo</p>
+          <p className="mt-5 font-display text-[22px] italic text-orisirisi">
+            Welcome to Orisirisi Emporium. — Taiwo
+          </p>
         </Reveal>
       </div>
     </section>
