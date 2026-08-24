@@ -168,13 +168,17 @@ export function CheckoutForm({ onSubmittingChange }: { onSubmittingChange?: (sub
 
   return (
     <>
-      <Script
-        src="https://js.paystack.co/v1/inline.js"
-        strategy="afterInteractive"
-        onReady={() => setScriptReady(true)}
-      />
-
       <form id={CHECKOUT_FORM_ID} onSubmit={handleSubmit} className="flex flex-col gap-6">
+        {/* Paystack's inline.js inspects the DOM on load and expects its own
+            <script> tag to be nested inside a <form> — outside one, it throws
+            "Please put your Paystack Inline javascript file inside of a form
+            element" as soon as openIframe() runs. */}
+        <Script
+          src="https://js.paystack.co/v1/inline.js"
+          strategy="afterInteractive"
+          onReady={() => setScriptReady(true)}
+        />
+
         <fieldset disabled={submitting} className="contents">
         <Section icon={User} title="Contact" subtitle="Who's this order for?">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
