@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 };
 
 const CHANNELS = [
-  { icon: Mail, label: "Email", value: "hello@orisirisi.com" },
-  { icon: MessageCircle, label: "WhatsApp", value: "+234 800 000 0000" },
+  { icon: Mail, label: "Email", value: "thetaiwotea@gmail.com" },
+  { icon: MessageCircle, label: "WhatsApp", value: "+234 912 915 3837" },
   { icon: Clock, label: "Response time", value: "Within 1 business day" },
 ];
 
