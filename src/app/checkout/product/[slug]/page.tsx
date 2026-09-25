@@ -27,7 +27,7 @@ export async function generateMetadata({
     openGraph: {
       title: product.name,
       description: product.description,
-      images: [placeholderImage(product.image, 800, 1000)],
+      images: [product.images[0] ?? placeholderImage(product.image, 800, 1000)],
     },
   };
 }
@@ -44,10 +44,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const product = await getProductBySlug(slug);
   if (!product) return notFound();
 
-  // Only one real photo exists per product right now, so the gallery shows
-  // just that — showing fabricated "-2"/"-3" variants would silently fall
-  // back to unrelated random photos for any product without real angles shot.
-  const gallery = [placeholderImage(product.image, 700, 875)];
+  // Real uploaded photos take priority; only fall back to the placeholder
+  // seed for products that predate real photography.
+  const gallery = product.images.length > 0 ? product.images : [placeholderImage(product.image, 700, 875)];
 
   const relatedAll = await getProductsByCategory(product.category);
   const related = relatedAll.filter((p) => p.id !== product.id).slice(0, 4);

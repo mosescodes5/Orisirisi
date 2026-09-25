@@ -40,7 +40,7 @@ export function ProductCard({ product, listView = false }: { product: Product; l
         </button>
         <Link href={`/product/${product.slug}`}>
           <Image
-            src={placeholderImage(product.image, 500, 625)}
+            src={product.images[0] ?? placeholderImage(product.image, 500, 625)}
             alt={product.name}
             fill
             sizes="(min-width: 768px) 25vw, 50vw"

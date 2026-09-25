@@ -21,8 +21,8 @@ const CATEGORY_MAP: Record<string, { name: Product["category"]; blurb: string; h
   },
   household: {
     name: "Household",
-    blurb: "Pieces that make a house feel lived-in — décor, storage and everyday essentials.",
-    hero: "orisirisi-cat-hero-household",
+    blurb: "Thoughtfully curated essentials that bring beauty, comfort, and function to your home.",
+    hero: "/images/home-living.jpg",
   },
   "fresh-juice": {
     name: "Fresh Juice",

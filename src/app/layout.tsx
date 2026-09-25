@@ -36,7 +36,7 @@ const beautiqueDisplay = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.orisirisi.com"),
   title: {
-    default: "Orísirísi with Taiwo — Jewelry, Wristwatch, Household Items & Fresh Juice",
+    default: "Orísirísi with Taiwo — Jewelry, Wristwatch, Home & Living & Fresh Juice",
     template: "%s — Orísirísi with Taiwo",
   },
   description:

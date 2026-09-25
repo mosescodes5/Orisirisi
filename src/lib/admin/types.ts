@@ -42,6 +42,7 @@ export type AdminProduct = {
   price: number;
   compare_at_price: number | null;
   image: string;
+  images: string[];
   description: string;
   is_new: boolean;
   is_published: boolean;

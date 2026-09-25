@@ -7,6 +7,8 @@ export type Product = {
   price: number;
   compareAtPrice?: number;
   image: string;
+  /** Real product photos (Supabase Storage URLs), in display order. Empty until real photos are uploaded in /admin. */
+  images: string[];
   description: string;
   isNew?: boolean;
 };

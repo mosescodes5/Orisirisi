@@ -12,7 +12,7 @@ export default async function Home() {
   return (
     <>
       <h1 className="sr-only">
-        Orísirísi with Taiwo — Jewelry, Wristwatch, Household Items & Fresh Juice
+        Orísirísi with Taiwo — Jewelry, Wristwatch, Home & Living & Fresh Juice
       </h1>
       <Hero />
       <Categories />

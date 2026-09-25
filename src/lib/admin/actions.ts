@@ -79,6 +79,18 @@ export async function deleteProduct(id: string) {
 }
 
 function productPayloadFromForm(formData: FormData) {
+  let images: string[] = [];
+  const rawImages = formData.get("images_json");
+  if (typeof rawImages === "string" && rawImages.length > 0) {
+    try {
+      const parsed = JSON.parse(rawImages);
+      if (Array.isArray(parsed)) images = parsed.filter((url) => typeof url === "string");
+    } catch {
+      // Malformed JSON from the client — treat as no photos rather than failing the save.
+      images = [];
+    }
+  }
+
   return {
     name: String(formData.get("name") ?? ""),
     slug: String(formData.get("slug") ?? "")
@@ -93,6 +105,7 @@ function productPayloadFromForm(formData: FormData) {
       ? Number(formData.get("compare_at_price"))
       : null,
     image: String(formData.get("image") ?? ""),
+    images,
     description: String(formData.get("description") ?? ""),
     is_new: formData.get("is_new") === "on",
     is_published: formData.get("is_published") === "on",

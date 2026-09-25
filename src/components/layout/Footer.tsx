@@ -5,7 +5,7 @@ const SHOP_LINKS = [
   { label: "All Categories", href: "/categories" },
   { label: "Jewelry", href: "/category/jewelry" },
   { label: "Wristwatch", href: "/category/wristwatch" },
-  { label: "Household Items", href: "/category/household" },
+  { label: "Home & Living", href: "/category/household" },
   { label: "Fresh Juice", href: "/category/fresh-juice" },
   { label: "New Arrivals", href: "/new-in" },
 ];

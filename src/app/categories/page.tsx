@@ -25,7 +25,7 @@ const CATEGORY_META: Record<string, { name: Product["category"]; blurb: string }
   },
   household: {
     name: "Household",
-    blurb: "Pieces that make a house feel lived-in — décor, storage and everyday essentials.",
+    blurb: "Thoughtfully curated essentials that bring beauty, comfort, and function to your home.",
   },
   "fresh-juice": {
     name: "Fresh Juice",

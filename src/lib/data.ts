@@ -13,7 +13,7 @@ import type { CategoryDef, Product } from "./types";
 export const categories: CategoryDef[] = [
   { slug: "jewelry", name: "Jewelry", itemCount: 6, image: "orisirisi-cat-jewelry" },
   { slug: "wristwatch", name: "Wristwatch", itemCount: 0, image: "orisirisi-cat-wristwatch" },
-  { slug: "household", name: "Household Items", itemCount: 6, image: "orisirisi-cat-household" },
+  { slug: "household", name: "Home & Living", itemCount: 6, image: "/images/home-living.jpg" },
   { slug: "fresh-juice", name: "Fresh Juice", itemCount: 0, image: "orisirisi-cat-fresh-juice" },
 ];
 
@@ -71,7 +71,10 @@ const CURATED_IMAGES: Record<string, string> = {
 };
 
 // Cheap placeholder image source — swap for real product photography or your CDN.
+// A seed that's already a real image path/URL (local asset under /public,
+// or a remote http(s) URL) passes straight through — no seed resolution.
 export function placeholderImage(seed: string, w = 600, h = 750) {
+  if (seed.startsWith("/") || seed.startsWith("http")) return seed;
   const curated = CURATED_IMAGES[seed];
   if (curated) {
     return `https://images.unsplash.com/photo-${curated}?auto=format&fit=crop&w=${w}&h=${h}&q=80`;
@@ -82,7 +85,9 @@ export function placeholderImage(seed: string, w = 600, h = 750) {
 // Same resolution logic as placeholderImage, but takes the product itself —
 // used wherever a Product object (rather than a bare seed string) is on
 // hand, e.g. building the order confirmation email after a webhook fires.
-export function productImage(product: Pick<Product, "image">, w = 600, h = 750) {
-  return placeholderImage(product.image, w, h);
+// Prefers the first real uploaded photo, falling back to the placeholder
+// seed for products that don't have one yet.
+export function productImage(product: Pick<Product, "image" | "images">, w = 600, h = 750) {
+  return product.images?.[0] ?? placeholderImage(product.image, w, h);
 }
 
