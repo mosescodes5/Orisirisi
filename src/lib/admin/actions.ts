@@ -50,6 +50,10 @@ export async function createProduct(_prevState: ActionResult | null, formData: F
   if (error) return { ok: false, error: error.message };
 
   revalidatePath("/admin/products");
+  // The storefront pages that list/display products are statically
+  // generated, so a save here needs to bust that cache too, or the new
+  // product (and its photos) won't actually show up on the live site.
+  revalidatePath("/", "layout");
   redirect("/admin/products");
 }
 
@@ -67,6 +71,10 @@ export async function updateProduct(
 
   revalidatePath("/admin/products");
   revalidatePath(`/admin/products/${id}`);
+  // Same reasoning as createProduct — bust the static storefront cache
+  // (product page, its category page, homepage shelves, etc.) so edits
+  // like newly uploaded photos actually reflect right away.
+  revalidatePath("/", "layout");
   redirect("/admin/products");
 }
 
@@ -75,6 +83,7 @@ export async function deleteProduct(id: string) {
   const db = createServiceRoleClient();
   await db.from("products").delete().eq("id", id);
   revalidatePath("/admin/products");
+  revalidatePath("/", "layout");
   redirect("/admin/products");
 }
 
