@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { categories, placeholderImage } from "@/lib/data";
 import { getProductsByCategory } from "@/lib/products";
+import { getHeroImageOverrides } from "@/lib/site-settings";
 import { ShopGrid } from "@/components/product/ShopGrid";
 import { Reveal } from "@/components/layout/Reveal";
 import type { Product } from "@/lib/types";
@@ -57,12 +58,15 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   const items = await getProductsByCategory(map.name);
   const subcategories = Array.from(new Set(items.map((p) => p.subcategory)));
+  const heroOverrides = await getHeroImageOverrides();
+  const heroKey = `hero_category_${slug.replace(/-/g, "_")}`;
+  const heroSrc = heroOverrides[heroKey] ?? placeholderImage(map.hero, 1600, 500);
 
   return (
     <>
       <section className="relative h-[300px] overflow-hidden">
         <Image
-          src={placeholderImage(map.hero, 1600, 500)}
+          src={heroSrc}
           alt={cat.name}
           fill
           priority

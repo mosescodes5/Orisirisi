@@ -5,11 +5,17 @@ import Link from "next/link";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowRight, ArrowDown } from "lucide-react";
 import type { PointerEvent } from "react";
-import { placeholderImage } from "@/lib/data";
 
 const ease = [0.16, 0.84, 0.44, 1] as const;
 
-export function Hero() {
+export function Hero({
+  images,
+}: {
+  /** Resolved src for each floating photo — already merged with any admin
+   *  override in src/app/page.tsx, so this component never needs to know
+   *  about site_settings. */
+  images: { household: string; jewelry: string; wristwatch: string };
+}) {
   // Raw pointer position within the hero art, normalized to -0.5..0.5
   const px = useMotionValue(0);
   const py = useMotionValue(0);
@@ -47,22 +53,30 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.08, ease }}
             className="mt-4.5 font-display text-[40px] font-medium leading-[1.02] tracking-tight sm:text-[56px] lg:text-[74px]"
           >
-            Every sort of
+            One Store.
             <br />
-            thing, <em className="font-normal italic text-orisirisi">beautifully</em>
-            <br />
-            found.
+            <em className="font-normal italic text-orisirisi">Endless</em> Possibilities.
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.16, ease }}
-            className="mt-6.5 max-w-[440px] text-[16.5px] leading-[1.7] text-ink/60"
+            transition={{ duration: 0.6, delay: 0.12, ease }}
+            className="mt-3 text-[15px] font-semibold text-ink/70"
           >
-            Orísirísi means variety — and that&apos;s exactly what this is. Household pieces, fine
-            jewelry, wristwatches and fresh juice, hand-picked by Taiwo so you never have to shop
-            five places for one home.
+            Handpicked by Taiwo
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.16, ease }}
+            className="mt-6.5 max-w-[500px] text-[16.5px] leading-[1.7] text-ink/60"
+          >
+            Why visit five different stores when one trusted brand can meet your everyday needs? At
+            Orisirisi, we carefully curate products that make everyday living easier, smarter and more
+            beautiful. Beyond selling products, check out our blog, where we share practical marketing
+            insights, business lessons and everyday inspiration to help you grow while you shop.
           </motion.p>
 
           <motion.div
@@ -77,7 +91,7 @@ export function Hero() {
             >
               <span className="absolute inset-0 -translate-x-full bg-orisirisi transition-transform duration-400 group-hover:translate-x-0" />
               <span className="relative flex items-center gap-2.5">
-                Shop the assortment
+                Explore Orisirisi
                 <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
               </span>
             </Link>
@@ -100,7 +114,7 @@ export function Hero() {
         >
           <FloatCard
             className="left-[6%] top-0 z-[2] h-[64%] w-[56%]"
-            src={placeholderImage("orisirisi-household", 700, 900)}
+            src={images.household}
             alt="Household items"
             y={[0, -10, 0]}
             duration={7}
@@ -110,7 +124,7 @@ export function Hero() {
           />
           <FloatCard
             className="right-0 top-[10%] z-[1] h-[46%] w-[44%]"
-            src={placeholderImage("orisirisi-jewelry", 600, 600)}
+            src={images.jewelry}
             alt="Jewelry"
             y={[0, 8, 0]}
             duration={8}
@@ -120,7 +134,7 @@ export function Hero() {
           />
           <FloatCard
             className="bottom-0 left-0 z-[3] h-[44%] w-[42%]"
-            src={placeholderImage("orisirisi-wristwatch", 600, 600)}
+            src={images.wristwatch}
             alt="Wristwatch"
             y={[0, -6, 0]}
             duration={6.5}

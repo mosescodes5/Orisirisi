@@ -7,7 +7,17 @@ import type { AdminProfile } from "@/lib/admin/types";
 
 const COLLAPSE_KEY = "orisirisi-admin-sidebar-collapsed";
 
-export function AdminShell({ profile, children }: { profile: AdminProfile; children: React.ReactNode }) {
+export function AdminShell({
+  profile,
+  isDeveloper,
+  children,
+}: {
+  profile: AdminProfile;
+  /** Whether the signed-in account is the developer account — gates a few
+   *  settings pages (Hero Images) that shouldn't show up for Taiwo/staff. */
+  isDeveloper: boolean;
+  children: React.ReactNode;
+}) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -41,6 +51,7 @@ export function AdminShell({ profile, children }: { profile: AdminProfile; child
 
       <AdminSidebar
         profile={profile}
+        isDeveloper={isDeveloper}
         collapsed={collapsed}
         mobileOpen={mobileOpen}
         onCloseMobile={() => setMobileOpen(false)}

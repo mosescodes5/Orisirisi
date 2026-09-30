@@ -6,6 +6,8 @@ import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { getCurrentAdminProfile } from "./queries";
 import type { OrderStatus } from "./types";
 import { isValidHexColor } from "@/lib/theme-palettes";
+import { isDeveloperEmail } from "./developer";
+import { HERO_IMAGE_SLOTS } from "@/lib/hero-images";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
@@ -36,6 +38,15 @@ export async function signOutAdmin() {
 async function requireAdmin() {
   const profile = await getCurrentAdminProfile();
   if (!profile) throw new Error("Not authorized.");
+  return profile;
+}
+
+/** Same as requireAdmin, but additionally restricted to the developer's own
+ *  account (see src/lib/admin/developer.ts) — used for settings that
+ *  shouldn't be exposed to Taiwo/staff, like swapping hero photos. */
+async function requireDeveloper() {
+  const profile = await requireAdmin();
+  if (!isDeveloperEmail(profile.email)) throw new Error("Not authorized.");
   return profile;
 }
 
@@ -234,11 +245,37 @@ export async function updateSiteTheme(_prevState: ActionResult | null, formData:
     { key: "theme_secondary", value: secondary, updated_at: now },
     { key: "theme_text", value: text, updated_at: now },
   ]);
-
   if (error) return { ok: false, error: error.message };
 
   // All three colors are read in the root layout, so every route
   // (storefront and admin) needs to re-render with the new values.
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+/** Hero images (developer-only) */
+
+export async function updateHeroImages(_prevState: ActionResult | null, formData: FormData): Promise<ActionResult> {
+  await requireDeveloper();
+  const db = createServiceRoleClient();
+  const now = new Date().toISOString();
+
+  for (const slot of HERO_IMAGE_SLOTS) {
+    const value = String(formData.get(slot.key) ?? "");
+    if (value) {
+      const { error } = await db
+        .from("site_settings")
+        .upsert({ key: slot.key, value, updated_at: now });
+      if (error) return { ok: false, error: error.message };
+    } else {
+      // Empty value means "reset to the built-in default" — just remove
+      // the override row rather than storing an empty string.
+      await db.from("site_settings").delete().eq("key", slot.key);
+    }
+  }
+
+  // Homepage and every category page read these, and they're statically
+  // generated, so bust that cache the same way product saves do.
   revalidatePath("/", "layout");
   return { ok: true };
 }

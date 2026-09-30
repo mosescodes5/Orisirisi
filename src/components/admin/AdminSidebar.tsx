@@ -7,6 +7,7 @@ import {
   Package,
   ShoppingCart,
   Palette,
+  Images,
   Newspaper,
   LogOut,
   ExternalLink,
@@ -17,7 +18,7 @@ import {
 import { signOutAdmin } from "@/lib/admin/actions";
 import type { AdminProfile } from "@/lib/admin/types";
 
-const NAV = [
+const BASE_NAV = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
   { label: "Products", href: "/admin/products", icon: Package },
   { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
@@ -25,14 +26,20 @@ const NAV = [
   { label: "Brand Theme", href: "/admin/settings/theme", icon: Palette },
 ];
 
+const DEVELOPER_NAV = [{ label: "Hero Images", href: "/admin/settings/hero-images", icon: Images }];
+
 export function AdminSidebar({
   profile,
+  isDeveloper,
   collapsed,
   mobileOpen,
   onCloseMobile,
   onToggleCollapse,
 }: {
   profile: AdminProfile;
+  /** Adds the developer-only "Hero Images" link — decided server-side in
+   *  the dashboard layout, never computed here from the profile itself. */
+  isDeveloper: boolean;
   /** Icon-only rail instead of the full sidebar. Desktop (lg+) only — the
    *  mobile drawer always shows full labels regardless of this. */
   collapsed: boolean;
@@ -44,6 +51,7 @@ export function AdminSidebar({
 }) {
   const pathname = usePathname();
   const label = collapsed ? "lg:hidden" : ""; // hide text only when collapsed AND at lg+
+  const nav = isDeveloper ? [...BASE_NAV, ...DEVELOPER_NAV] : BASE_NAV;
 
   return (
     <aside
@@ -78,7 +86,7 @@ export function AdminSidebar({
 
       <nav className="flex-1 px-3 py-6">
         <div className="flex flex-col gap-1">
-          {NAV.map((item) => {
+          {nav.map((item) => {
             const active = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
             const Icon = item.icon;
             return (
