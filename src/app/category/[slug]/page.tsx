@@ -12,7 +12,7 @@ import type { Product } from "@/lib/types";
 const CATEGORY_MAP: Record<string, { name: Product["category"]; blurb: string; hero: string }> = {
   jewelry: {
     name: "Jewelry",
-    blurb: "Necklaces, earrings and bangles that don't wait for an occasion.",
+    blurb: "Discover timeless necklaces, earrings and bangles thoughtfully curated to elevate every look and tell your unique story.",
     hero: "orisirisi-cat-hero-jewelry",
   },
   wristwatch: {

@@ -77,7 +77,7 @@ export function CategoriesGrid({
                 )}
 
                 <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide transition-transform duration-300 group-hover:translate-x-1.5">
-                  Explore {cat.name} <ArrowRight size={12} />
+                  Shop {cat.name} <ArrowRight size={12} />
                 </span>
               </div>
             </Link>
